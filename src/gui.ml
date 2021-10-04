@@ -1,2 +1,1 @@
-
-let gui_game = 1;
+open Graphics
