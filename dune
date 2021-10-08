@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 (executable
  (name game)
  (public_name Game)
  (libraries yojson ANSITerminal))
+=======
+(library
+ (name gui))
+>>>>>>> main
