@@ -1,10 +1,10 @@
-# dune exec bin/main.exe
+# dune build src/game_board.mli
 # OCAMLPARAM: unset
 # Workspace root: /home/glee0237/3110/scrabble_final
-$ /usr/bin/nproc > /tmp/dune636102.output 2> /dev/null
+$ /usr/bin/nproc > /tmp/dunee86a87.output 2> /dev/null
 # Auto-detected concurrency: 8
 # disable binary cache
-$ /home/glee0237/.opam/cs3110-final-project/bin/ocamlc.opt -config > /tmp/duned06b35.output
+$ /home/glee0237/.opam/cs3110-final-project/bin/ocamlc.opt -config > /tmp/dunedf4282.output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -121,7 +121,3 @@ $ /home/glee0237/.opam/cs3110-final-project/bin/ocamlc.opt -config > /tmp/duned0
 #      ; windows_unicode = false
 #      }
 #  }
-# Workspace root: /home/glee0237/3110/scrabble_final
-$ (cd _build/default && /home/glee0237/.opam/cs3110-final-project/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I bin/.main.eobjs/byte -I /home/glee0237/.opam/cs3110-final-project/lib/graphics -no-alias-deps -opaque -o bin/.main.eobjs/byte/dune__exe__Main.cmo -c -impl bin/main.ml)
-$ (cd _build/default && /home/glee0237/.opam/cs3110-final-project/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I bin/.main.eobjs/byte -I bin/.main.eobjs/native -I /home/glee0237/.opam/cs3110-final-project/lib/graphics -intf-suffix .ml -no-alias-deps -opaque -o bin/.main.eobjs/native/dune__exe__Main.cmx -c -impl bin/main.ml)
-$ (cd _build/default && /home/glee0237/.opam/cs3110-final-project/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o bin/main.exe /home/glee0237/.opam/cs3110-final-project/lib/graphics/graphics.cmxa -I /home/glee0237/.opam/cs3110-final-project/lib/graphics bin/.main.eobjs/native/dune__exe__Main.cmx)
