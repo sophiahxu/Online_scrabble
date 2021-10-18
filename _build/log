@@ -1,10 +1,10 @@
-# dune exec bin/main.exe
+# dune build
 # OCAMLPARAM: unset
 # Workspace root: /home/hanna-westerheim/cs3110/scrabble_final
-$ /usr/bin/nproc > /tmp/duneb0d1f4.output 2> /dev/null
+$ /usr/bin/nproc > /tmp/dune229d4d.output 2> /dev/null
 # Auto-detected concurrency: 4
 # disable binary cache
-$ /home/hanna-westerheim/.opam/scrabble/bin/ocamlc.opt -config > /tmp/dune6753c0.output
+$ /home/hanna-westerheim/.opam/scrabble/bin/ocamlc.opt -config > /tmp/dune40e404.output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -116,4 +116,3 @@ $ /home/hanna-westerheim/.opam/scrabble/bin/ocamlc.opt -config > /tmp/dune6753c0
 #      ; windows_unicode = false
 #      }
 #  }
-# Workspace root: /home/hanna-westerheim/cs3110/scrabble_final
