@@ -19,11 +19,7 @@ let main () =
       cursor.mouse_x > 250 && cursor.mouse_x < 350
       && cursor.mouse_y > 250 && cursor.mouse_y < 350
     then if cursor.button then open_graph "";
-<<<<<<< HEAD
-
-=======
     
->>>>>>> grace
     while true do
       let st = wait_next_event [ Key_pressed ] in
       if st.keypressed then raise Exit
