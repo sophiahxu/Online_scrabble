@@ -20,6 +20,10 @@ let main () =
       && cursor.mouse_y > 250 && cursor.mouse_y < 350
     then if cursor.button then open_graph "";
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+    
+>>>>>>> grace
 =======
     
 >>>>>>> grace

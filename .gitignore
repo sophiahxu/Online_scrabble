@@ -1,2 +1,6 @@
+<<<<<<< HEAD
 #ignore build files
 _build/*
+=======
+/build**
+>>>>>>> grace
