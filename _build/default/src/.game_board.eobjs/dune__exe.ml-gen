@@ -1,0 +1,6 @@
+(** @canonical Dune__exe.Author *)
+module Author = Dune__exe__Author
+
+
+(** @canonical Dune__exe.Game_board *)
+module Game_board = Dune__exe__Game_board
