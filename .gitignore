@@ -1,2 +1,2 @@
 #ignore build files
-_build
+_build/*
