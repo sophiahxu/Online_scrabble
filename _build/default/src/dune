@@ -1,3 +1,0 @@
-(executable
- (name game_board)
- (libraries graphics))
