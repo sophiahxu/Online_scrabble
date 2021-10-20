@@ -6,7 +6,7 @@ exception Exit
 
 (** [init ()] initializes the game with a welcoming message and button
     allows the player to play the game. *)
-let init =
+let init () =
   open_graph "";
 
   moveto 150 200;
@@ -33,7 +33,7 @@ let event_loop st =
     the play screen when the button is pressed. If a key is pressed, the
     GUI closes. *)
 let main () =
-  init;
+  init ();
   loop_at_exit [ Key_pressed; Button_down ] event_loop
 
 let () = main ()
