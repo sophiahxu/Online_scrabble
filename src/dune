@@ -1,0 +1,5 @@
+((library
+  (name src)
+  (public_name Game)
+  (modules)
+  (libraries graphics)))
