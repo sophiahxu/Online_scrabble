@@ -7,17 +7,21 @@ exception Exit
 (** [init ()] initializes the game with a welcoming message and button
     allows the player to play the game. *)
 let init () =
-  open_graph " 1200x750";
+  open_graph "";
+  resize_window 900 625;
+  set_window_title "Scrabble";
 
-  moveto 150 200;
-  draw_string "Let's Play Scrabble! Click the Play Button to Start";
-  set_text_size 35;
   set_color 0x8282E8;
-
-  set_window_title "SCRABBLE";
-  let vertices = [| (250, 250); (250, 350); (350, 300) |] in
+  let vertices = [| (350, 275); (350, 350); (550, 350); (550, 275) |] in
   draw_poly vertices;
-  fill_poly vertices
+  fill_poly vertices;
+
+  set_color black;
+  moveto 300 250;
+  draw_string "Let's Play Scrabble! Click the Play Button to Start.";
+
+  moveto 440 305;
+  draw_string "PLAY"
 
 (** [event_loop st] takes the player to the next screen if the button is
     pressed. Raises: [Exit] if a key is pressed. *)
@@ -25,7 +29,7 @@ let event_loop st =
   if st.keypressed then raise Exit;
   if st.button then
     if
-      st.mouse_x > 250 && st.mouse_x < 350 && st.mouse_y > 250
+      st.mouse_x > 350 && st.mouse_x < 550 && st.mouse_y > 275
       && st.mouse_y < 350
     then begin
       clear_graph ();
