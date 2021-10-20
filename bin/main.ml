@@ -1,4 +1,5 @@
 open Graphics
+open Game
 
 exception Exit
 
@@ -21,7 +22,7 @@ let event_loop st =
     if
       st.mouse_x > 250 && st.mouse_x < 350 && st.mouse_y > 250
       && st.mouse_y < 350
-    then open_graph ""
+    then Game_board.make_board ()
 
 let main () =
   init ();
