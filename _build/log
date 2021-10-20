@@ -1,6 +1,0 @@
-# dune exec bin/main.exe
-# OCAMLPARAM: unset
-# Workspace root: /home/hanna-westerheim/cs3110/scrabble_final
-$ /usr/bin/nproc > /tmp/dune06d09d.output 2> /dev/null
-# Auto-detected concurrency: 4
-# disable binary cache
