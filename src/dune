@@ -1,5 +1,4 @@
-((library
-  (name src)
-  (public_name Game)
-  (modules)
-  (libraries graphics)))
+(library
+ (name game)
+ (public_name Game)
+ (libraries graphics))
