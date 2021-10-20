@@ -27,7 +27,9 @@ let event_loop st =
     if
       st.mouse_x > 250 && st.mouse_x < 350 && st.mouse_y > 250
       && st.mouse_y < 350
-    then Game_board.make_board ()
+    then 
+      clear_graph ();
+      Game_board.make_board ()
 
 (** [main ()] initializes and maintains the home screen and switches to
     the play screen when the button is pressed. If a key is pressed, the
