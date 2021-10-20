@@ -12,7 +12,7 @@ let init () =
   moveto 150 200;
   draw_string "Let's Play Scrabble! Click the Play Button to Start";
   set_text_size 35;
-  set_color yellow;
+  set_color 0x8282E8;
 
   set_window_title "SCRABBLE";
   let vertices = [| (250, 250); (250, 350); (350, 300) |] in
@@ -27,9 +27,8 @@ let event_loop st =
     if
       st.mouse_x > 250 && st.mouse_x < 350 && st.mouse_y > 250
       && st.mouse_y < 350
-    then 
-      clear_graph ();
-      Game_board.make_board ()
+    then clear_graph ();
+  Game_board.make_board ()
 
 (** [main ()] initializes and maintains the home screen and switches to
     the play screen when the button is pressed. If a key is pressed, the
