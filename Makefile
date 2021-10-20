@@ -16,3 +16,12 @@ zip:
 
 doc:
 	dune build @doc
+
+clean:
+	dune clean
+	rm -f scrabble.zip
+
+loc:
+	dune clean
+	rm -f scrabble.zip
+	cloc --by-file --include-lang=OCaml .
