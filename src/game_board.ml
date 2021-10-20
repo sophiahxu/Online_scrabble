@@ -6,7 +6,7 @@ exception Exit
 (**[graph] opens the graph that will contain all of the other components 
 of the board and screen.*)
 let graph = 
-  open_graph ""
+  open_graph " 900x625"
 
 (**[draw_row w h num x y] draws a row of [num] rectangles of width [w] and 
 height [h]. The lower left corner of the row begins at the coordinates
@@ -179,10 +179,10 @@ pressed, the GUI closes. *)
 let make_board () = 
   graph;
 
-  let length = 25 in 
-  let height = 25 in 
-  let start_x = 200 in 
-  let start_y = 50 in 
+  let length = 35 in 
+  let height = 35 in 
+  let start_x = 350 in 
+  let start_y = 80 in 
   set_color black;
   draw_grid length height 15 15 start_x start_y;
   (*draws the main board*)
@@ -191,21 +191,28 @@ let make_board () =
   color_grid colors length height;
 
   set_color black;
-  draw_grid 30 30 7 1 280 10;
+  draw_grid 40 40 7 1 490 20;
   (*draws the tiles*)
 
-  draw_rect 40 280 100 150;
-  draw_rect 40 120 100 150;
+  draw_rect 30 30 125 565;
+  moveto 50 575;
+  draw_string "Key";
+  (*draws key box*)
+
+  draw_rect 180 445 150 100;
+  draw_rect 180 310 150 100;
   (*draws player score boxes*)
 
-  moveto 68 410;
+  moveto 190 525;
   draw_string "Player 1";
-  moveto 68 250;
+  moveto 190 390;
   draw_string "Player 2";
   (*draw player score spaces*)
 
-  draw_circle 90 60 45;
-  moveto 58 53;
-  draw_string "DRAW LETTER";
+  draw_circle 255 80 55; 
+  moveto 230 85;
+  draw_string "DRAW";
+  moveto 220 70;
+  draw_string "98 tiles left";
   (*draw bag to get new letters*)
   loop_at_exit [Key_pressed] event_loop

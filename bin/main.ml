@@ -24,12 +24,14 @@ let init () =
     pressed. Raises: [Exit] if a key is pressed. *)
 let event_loop st =
   if st.keypressed then raise Exit;
-    if st.button then
-      if
-        st.mouse_x > 250 && st.mouse_x < 350 && st.mouse_y > 250
-          && st.mouse_y < 350
-      then begin clear_graph ();
-        Game_board.make_board () end 
+  if st.button then
+    if
+      st.mouse_x > 250 && st.mouse_x < 350 && st.mouse_y > 250
+      && st.mouse_y < 350
+    then begin
+      clear_graph ();
+      Game_board.make_board ()
+    end
 
 (** [main ()] initializes and maintains the home screen and switches to
     the play screen when the button is pressed. If a key is pressed, the
