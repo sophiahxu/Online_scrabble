@@ -1,0 +1,19 @@
+Installation Process: 
+* Download .zip file of source code
+* $ cd /path/to/scrabble/folder
+* $ update opam
+* Make sure graphics package is installed
+  *opam install graphics
+
+  *Note* Windows might have an issue displaying the GUI: 
+  In order to display the GUI from a WSL, 
+  host an ssh server on your WSL with X11 forwarding enabled. 
+  Install and launch an XServer (we use Xming) on your windows machine. 
+  Install and open PuTTY on Windows and connect to your linux server 
+  with X11 forwarding enabled and set to localhost:0.0. 
+  Proceed through all other instructions in the PuTTY terminal window.
+
+To Launch Scrabble Game:
+* $ cd /path/to/scrabble/folder
+* $ make play
+
