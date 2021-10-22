@@ -3,10 +3,10 @@ open Graphics
 exception Exit
 (** Raised when the GUI should be closed. *)
 
-(**[graph] opens the graph that will contain all of the other components 
-of the board and screen.*)
-let graph = 
-  open_graph " 900x625"
+(**[graph l h] opens a graph with length [l] and height [h]. 
+Requires: l, h < 0. *)
+let graph l h = 
+  open_graph (" " ^ string_of_int l ^ "x" ^ string_of_int h) 
 
 (**[draw_row w h num x y] draws a row of [num] rectangles of width [w] and 
 height [h]. The lower left corner of the row begins at the coordinates
@@ -16,8 +16,7 @@ let rec draw_row w h num x y =
   if num <= 0 then ()
   else 
     draw_rect x y w h;
-    if num > 0 then draw_row w h (num - 1) (x + w) y;
-    moveto x y
+    if num > 0 then draw_row w h (num - 1) (x + w) y
 
 (**[draw_grid w h x_num y_num x y] draws a grid of rectangles that
 are each width [w] and height [h]. The overall grid is [x_num] rectangles 
@@ -28,8 +27,7 @@ let rec draw_grid w h x_num y_num x y=
   if y_num <= 0 then ()
   else
     draw_row w h x_num x y;
-    if y_num > 0 then draw_grid w h x_num (y_num - 1) x (y + h);
-    moveto x y
+    if y_num > 0 then draw_grid w h x_num (y_num - 1) x (y + h)
 
 (**[triple_word h l x y] is an array containing information about the locations
 and colors that need to be filled in with the color for the triple word
@@ -164,7 +162,114 @@ let rec color_grid lst l h =
   | (((x, y), col) :: t) -> 
     set_color col; 
     fill_rect x y h l ; 
-    color_grid t l h
+    color_grid t l h 
+
+(**[grid l h] draws the grid of rectangles with squares that are (2/50) of 
+[l]. The lower left corner of this grid is also dependent on [l] and [h]. 
+Requires: l, h > 0.*)
+let grid l h = 
+  let length = l * 2 / 50 in 
+  let height = length in 
+  let start_x = l * 1 / 2 in 
+  let start_y = h * 1 / 5 in 
+  set_color black;
+  draw_grid length height 15 15 start_x start_y;
+  (*draws lines of board without colors*)
+
+  let colors = color_list length height start_x start_y in 
+  color_grid colors length height
+  (*adds colors*) 
+
+let alphabet_key x1 x2 top margin = 
+  moveto x1 top;
+  draw_string "Key";
+
+  moveto x1 (top - margin);
+  draw_string "A = 1";
+  moveto x1 (top - 2 * margin);
+  draw_string "B = 3";
+  moveto x1 (top - 3 * margin);
+  draw_string "C = 3";
+  moveto x1 (top - 4 * margin);
+  draw_string "D = 2";
+  moveto x1 (top - 5 * margin);
+  draw_string "E = 1";
+  moveto x1 (top - 6 * margin);
+  draw_string "F = 4";
+  moveto x1 (top - 7 * margin);
+  draw_string "G = 2";
+  moveto x1 (top - 8 * margin);
+  draw_string "H = 4";
+  moveto x1 (top - 9 * margin);
+  draw_string "I = 1";
+  moveto x1 (top - 10 * margin);
+  draw_string "J = 8";
+  moveto x1 (top - 11 * margin);
+  draw_string "K = 5";
+  moveto x1 (top - 12 * margin);
+  draw_string "L = 1";
+  moveto x1 (top - 13 * margin);
+  draw_string "M = 3";
+
+  moveto x2 (top - margin);
+  draw_string "N = 1";
+  moveto x2 (top -  2 * margin);
+  draw_string "O = 1";
+  moveto x2 (top - 3 * margin);
+  draw_string "P = 3";
+  moveto x2 (top - 4 * margin);
+  draw_string "Q = 10";
+  moveto x2 (top - 5 * margin);
+  draw_string "R = 1";
+  moveto x2 (top - 6 * margin);
+  draw_string "S = 1";
+  moveto x2 (top - 7 * margin);
+  draw_string "T = 1";
+  moveto x2 (top - 8 * margin);
+  draw_string "U = 1";
+  moveto x2 (top - 9 * margin);
+  draw_string "V = 4";
+  moveto x2 (top - 10 * margin);
+  draw_string "W = 4";
+  moveto x2 (top - 11 * margin);
+  draw_string "X = 8";
+  moveto x2 (top - 12 * margin);
+  draw_string "Y = 4";
+  moveto x2 (top - 13 * margin);
+  draw_string "Z = 10"
+
+let color_key x top margin = 
+  moveto x top;
+  draw_string "Dark blue = triple letter";
+
+  moveto x (top - margin);
+  draw_string "Light blue = triple letter score"
+
+let key l h = 
+  let left = l * 1 / 25 in 
+  let bottom = h * 1 / 20 in 
+  draw_rect left bottom (l * 1 / 5) (h * 9 / 10) ;
+
+  let x1 = left + l / 50 in 
+  let x2 = left + (l / 10) + l / 50 in 
+  let margin = h * 1/25 in 
+  let top = h * 23 / 25 in 
+
+  alphabet_key x1 x2 top margin;
+  moveto x1 (h * 9 / 25); 
+  lineto (left + l / 5 - l / 50) (h * 9 / 25);
+  let top = h * 7 / 25 in 
+  color_key x1 top margin 
+
+let rec player_boxes l h num = 
+  if num = 0 then () 
+  else  
+    let x = l * 13 / 50 in 
+    let y = (h * 1 / 6) * (4 - num)  + (h * 3 / 10) in 
+    draw_rect x y (l * 1 / 5) (h * 3 / 20);
+    moveto (x + l / 50) (y + h * 3 / 25);
+    draw_string ("Player " ^ string_of_int num);
+    if num > 0 then player_boxes l h (num - 1)
 
 (** [event_loop st] tracks any events that occur on the game board and exits
 when a key is pressed. 
@@ -177,37 +282,27 @@ board itself, a space for the current player's letters, a button to click to
 draw letters, and two spaces for player scores to be displayed. If a key is
 pressed, the GUI closes. *)
 let make_board () = 
-  graph;
+  let b_length = 800 in (*must be a multiple of 100*)
+  let b_height = 600 in (*must be a multiple of 100*)
 
-  let length = 35 in 
-  let height = 35 in 
-  let start_x = 350 in 
-  let start_y = 80 in 
-  set_color black;
-  draw_grid length height 15 15 start_x start_y;
-  (*draws the main board*)
+  graph b_length b_height ;
+  (*sets up graph*)
 
-  let colors = color_list length height start_x start_y in 
-  color_grid colors length height;
+  grid b_length b_height;
+  (*draws colored grid*)
 
   set_color black;
-  draw_grid 40 40 7 1 490 20;
+  draw_grid (b_length * 1 / 15) (b_length * 1 / 15) 7 1 (b_length * 57/100)
+   (b_height * 1 / 20);
   (*draws the tiles*)
 
-  draw_rect 30 30 125 565;
-  moveto 50 575;
-  draw_string "Key";
-  (*draws key box*)
+  key b_length b_height;
+  (*draws key*)
 
-  draw_rect 180 445 150 100;
-  draw_rect 180 310 150 100;
+  let num = 2 in 
+  (*number of players*)
+  player_boxes b_length b_height num;
   (*draws player score boxes*)
-
-  moveto 190 525;
-  draw_string "Player 1";
-  moveto 190 390;
-  draw_string "Player 2";
-  (*draw player score spaces*)
 
   draw_circle 255 80 55; 
   moveto 230 85;
