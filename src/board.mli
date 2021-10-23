@@ -12,3 +12,4 @@ val tile_y : t -> int
 
 val color : t -> int option
 val letter : t -> char 
+val name : t -> string

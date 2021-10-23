@@ -19,170 +19,24 @@ let rec draw_row w h num x y =
     draw_rect x y w h;
     if num > 0 then draw_row w h (num - 1) (x + w) y
 
-(**[draw_grid w h x_num y_num x y] draws a grid of rectangles that
-are each width [w] and height [h]. The overall grid is [x_num] rectangles 
-long and [y_num] rectangles tall. The lowerleft corner of the entire grid is 
-at ([x], [y]). 
-Requires: [w], [h], [x_num], [y_num] > 0. [x], [y] >= 0.*)
-let rec draw_grid w h x_num y_num x y= 
-  if y_num <= 0 then ()
-  else
-    draw_row w h x_num x y;
-    if y_num > 0 then draw_grid w h x_num (y_num - 1) x (y + h) 
-
-(**[triple_word h l x y] is an array containing information about the locations
-and colors that need to be filled in with the color for the triple word
-score tiles. Each tile is of height [h] and length [l], and the lower left
-corner of the entire board is at ([x], [y]). Each entry in the array is 
-of the format ((x : int), (y : int), color : int). *)
-let triple_word h l x y = 
-  let color = 0xFF0000 in 
-  let row0 = y in 
-  let row7 = y + 7 * h in 
-  let row14 = y + 14 * h in 
-  let col0 = x in 
-  let col7 = x + 7 * l in 
-  let col14 = x + 14 * l in 
-
-  [((col0, row0), color); ((col0, row7), color); 
-  ((col0, row14), color); ((col7, row0), color);
-  ((col7, row14), color); ((col14, row0), color);
-  ((col14, row7), color); ((col14, row14), color);]
-
-  (**[triple_letter h l x y] is an array containing information about the 
-  locations and colors that need to be filled in with the color for the triple 
-  letter score tiles. Each tile is of height [h] and length [l], and the lower
-  left corner of the entire board is at ([x], [y]). Each entry in the array is 
-  of the format ((x : int), (y : int), color : int). *)
-let triple_letter h l x y = 
-  let color = 0x0000FF in 
-  let row1 = y + h in 
-  let row5 = y + 5 * h in 
-  let row9 = y + 9 * h in 
-  let row13 = y + 13 * h in 
-
-  let col1 =  x + l in 
-  let col5 = x + 5 * l in 
-  let col9 = x + 9 * l in 
-  let col13 = x + 13 * l in 
-
-  [((col5, row1), color); ((col9, row1), color); ((col1, row5), color); 
-  ((col5, row5), color);  ((col9, row5), color);
-  ((col13, row5), color); ((col5, row9), color); ((col1, row9), color); 
-  ((col9, row9), color); ((col13, row9), color); ((col5, row13), color); 
-  ((col9, row13), color);]
-
-  (**[double_word h l x y] is an array containing information about the 
-  locations and colors that need to be filled in with the color for the double 
-  word score tiles. Each tile is of height [h] and length [l], and the lower
-  left corner of the entire board is at ([x], [y]). Each entry in the array is 
-  of the format ((x : int), (y : int), color : int). *)
-  let double_word h l x y = 
-    let color = 0xE88282 in 
-    let row1 = y + h in 
-    let row2 = y + 2 * h in 
-    let row3 = y + 3 * h in 
-    let row4 = y + 4 * h in 
-    let row7 = y + 7 * h in 
-    let row10 = y + 10 * h in 
-    let row11 = y + 11 * h in 
-    let row12 = y + 12 * h in 
-    let row13 = y + 13 * h in 
-  
-    let col1 =  x + l in 
-    let col2 = x + 2 * l in 
-    let col3 = x + 3 * l in 
-    let col4 = x + 4 * l in 
-    let col7 = x + 7 * l in 
-    let col10 = x + 10 * l in 
-    let col11 = x + 11 * l in 
-    let col12 = x + 12 * l in 
-    let col13 = x + 13 * l in 
-  
-    [((col1, row1), color); ((col13, row1), color); ((col2, row2), color);
-    ((col12, row2), color); ((col3, row3), color); ((col11, row3), color);
-    ((col4, row4), color); ((col10, row4), color); ((col7, row7), color);
-    ((col4, row10), color); ((col10, row10), color); ((col3, row11), color);
-    ((col11, row11), color); ((col2, row12), color); 
-    ((col12, row12), color);
-    ((col1, row13), color); ((col13, row13), color);]
-
-(**[double_letter h l x y] is an array containing information about the 
-  locations and colors that need to be filled in with the color for the double 
-  letter score tiles. Each tile is of height [h] and length [l], and the lower
-  left corner of the entire board is at ([x], [y]). Each entry in the array is 
-  of the format ((x : int), (y : int), color : int). *)
-let double_letter h l x y = 
-  let color = 0x8282E8 in 
-  let row0 = y in 
-  let row2 = y + 2 * h in 
-  let row3 = y + 3 * h in 
-  let row6 = y + 6 * h in 
-  let row7 = y + 7 * h in 
-  let row8 = y + 8 * h in 
-  let row11 = y + 11 * h in 
-  let row12 = y + 12 * h in 
-  let row14 = y + 14 * h in 
-
-  let col0 = x in 
-  let col2 = x + 2 * l in 
-  let col3 = x + 3 * l in 
-  let col6 = x + 6 * l in 
-  let col7 = x + 7 * l in 
-  let col8 = x + 8 * l in 
-  let col11 = x + 11 * l in 
-  let col12 = x + 12 * l in 
-  let col14 = x + 14 * l in
-
-  [((col3, row0), color); ((col11, row0), color);
-  ((col6, row2), color); ((col8, row2), color);
-  ((col0, row3), color); ((col7, row3), color);
-  ((col14, row3), color); ((col2, row6), color);
-  ((col6, row6), color); ((col8, row6), color);
-  ((col12, row6), color); ((col3, row7), color);
-  ((col11, row7), color); ((col2, row8), color);
-  ((col6, row8), color); ((col8, row8), color);
-  ((col12, row8), color); ((col0, row11), color);
-  ((col7, row11), color); ((col14, row11), color);
-  ((col6, row12), color); ((col8, row12), color);
-  ((col3, row14), color); ((col11, row14), color);]
-
-(**[color_list h l x y] is an array of the necessary locations and colors 
-used to fill in the grid made up of squares of height [h] and length [l], 
-where the lower left corner of the grid is at [x] [y]. Each entry in the array 
-is of the format ((x : int), (y : int), color : int). *)
-let color_list h l x y = 
-  triple_word h l x y @ double_letter h l x y @ double_word h l x y @ 
-  triple_letter h l x y
-
 (**[color_grid lst l h] fills in the grid at the locations and with the colors
 described in [lst]. Each unit of the grid has length [l] and height [h].*)
-let rec color_grid lst l h = 
-  match lst with 
-  | [] -> () 
-  | (((x, y), col) :: t) -> 
-    set_color col; 
-    fill_rect x y h l ; 
-    color_grid t l h 
-
+let rec color_grid tiles s =
+  match tiles with 
+  | [] -> ()
+  | h :: t -> 
+    match (color h) with 
+    | Some x ->  set_color x;
+    fill_rect (tile_x h) (tile_y h) s s;
+    color_grid t s
+    | None -> color_grid t s
+    
 let rec grid board_tiles side = 
   match board_tiles with 
   | [] -> ()
   | h :: t -> 
     draw_rect (tile_x h) (tile_y h) side side;
     grid t side
-
-(**[grid l h] draws the grid of rectangles with squares that are (2/50) of 
-[l]. The lower left corner of this grid is also dependent on [l] and [h]. 
-Requires: l, h > 0.*)
-let colorful l h = 
-  let length = l * 2 / 50 in 
-  let height = length in 
-  let start_x = l * 1 / 2 in 
-  let start_y = h * 1 / 5 in 
-  let colors = color_list length height start_x start_y in 
-  color_grid colors length height  
-  (*adds colors*) 
 
 (**[alphabet_key x1 x2 top margin] draws the 26 letters of the alphabet
 in the box for the key. The letters are arranged in two rows, one with an
@@ -310,12 +164,13 @@ let make_board () =
   (*sets up graph*)
 
   grid (tiles board) (side board);
+  color_grid (tiles board) (side board);
   (*draws colored grid*)
 
-  colorful b_length b_height;
+  (*colorful b_length b_height; *)
 
   set_color black;
-  draw_grid (b_length * 1 / 15) (b_length * 1 / 15) 7 1 (b_length * 57/100)
+  draw_row (b_length * 1 / 15) (b_length * 1 / 15) 7 (b_length * 57/100)
    (b_height * 1 / 20);
   (*draws the tiles*) 
 
