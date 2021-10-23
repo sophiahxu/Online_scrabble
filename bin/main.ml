@@ -19,6 +19,8 @@ let init () =
   set_color black;
   moveto 300 250;
   draw_string "Let's Play Scrabble! Click the Play Button to Start.";
+  moveto 390 225;
+  draw_string "Press Any Key to Exit";
 
   moveto 440 305;
   draw_string "PLAY"
