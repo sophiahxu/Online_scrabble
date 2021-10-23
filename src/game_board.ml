@@ -1,4 +1,5 @@
 open Graphics
+open Board
 
 exception Exit
 (** Raised when the GUI should be closed. *)
@@ -27,7 +28,7 @@ let rec draw_grid w h x_num y_num x y=
   if y_num <= 0 then ()
   else
     draw_row w h x_num x y;
-    if y_num > 0 then draw_grid w h x_num (y_num - 1) x (y + h)
+    if y_num > 0 then draw_grid w h x_num (y_num - 1) x (y + h) 
 
 (**[triple_word h l x y] is an array containing information about the locations
 and colors that need to be filled in with the color for the triple word
@@ -164,20 +165,23 @@ let rec color_grid lst l h =
     fill_rect x y h l ; 
     color_grid t l h 
 
+let rec grid board_tiles side = 
+  match board_tiles with 
+  | [] -> ()
+  | h :: t -> 
+    draw_rect (tile_x h) (tile_y h) side side;
+    grid t side
+
 (**[grid l h] draws the grid of rectangles with squares that are (2/50) of 
 [l]. The lower left corner of this grid is also dependent on [l] and [h]. 
 Requires: l, h > 0.*)
-let grid l h = 
+let colorful l h = 
   let length = l * 2 / 50 in 
   let height = length in 
   let start_x = l * 1 / 2 in 
   let start_y = h * 1 / 5 in 
-  set_color black;
-  draw_grid length height 15 15 start_x start_y;
-  (*draws lines of board without colors*)
-
   let colors = color_list length height start_x start_y in 
-  color_grid colors length height
+  color_grid colors length height  
   (*adds colors*) 
 
 (**[alphabet_key x1 x2 top margin] draws the 26 letters of the alphabet
@@ -301,16 +305,19 @@ let make_board () =
   let b_length = 800 in (*must be a multiple of 100*)
   let b_height = 600 in (*must be a multiple of 100*)
 
+  let board = board_setup b_length b_height in 
   graph b_length b_height ;
   (*sets up graph*)
 
-  grid b_length b_height;
+  grid (tiles board) (side board);
   (*draws colored grid*)
+
+  colorful b_length b_height;
 
   set_color black;
   draw_grid (b_length * 1 / 15) (b_length * 1 / 15) 7 1 (b_length * 57/100)
    (b_height * 1 / 20);
-  (*draws the tiles*)
+  (*draws the tiles*) 
 
   key b_length b_height;
   (*draws key*)
