@@ -172,6 +172,17 @@ Raises: [Exit] if a key is pressed. *)
 let event_loop st =
   if st.keypressed then raise Exit
 
+(*[color_key color phrase x y w h] draws a rectangle with lower left corner 
+at ([x],[y]) with width [w] and height [h] and colors it with [color]. 
+[phrase] is displayed to the right of the rectangle*)
+let color_key color phrase x y w h =
+  set_color color; 
+  draw_rect x y w h ;
+  fill_rect x y w h;
+  moveto (x + w) (y + h/2);
+  set_color black;
+  draw_string phrase
+
 (**[make board ()] sets up the initial board game, which includes the Scrabble
 board itself, a space for the current player's letters, a button to click to
 draw letters, and two spaces for player scores to be displayed. If a key is
@@ -197,6 +208,11 @@ let make_board () =
   draw_rect 30 30 125 565;
   moveto 50 575;
   draw_string "Key";
+  color_key 0xFF0000 " -3x Word" 50 540 25 25;
+  color_key 0x0000FF " -3x Letter" 50 510 25 25;
+  color_key 0xE88282 " -2x Word" 50 480 25 25;
+  color_key 0x8282E8 " -2x Letter" 50 450 25 25;
+  
   (*draws key box*)
 
   draw_rect 180 445 150 100;
@@ -214,5 +230,6 @@ let make_board () =
   draw_string "DRAW";
   moveto 220 70;
   draw_string "98 tiles left";
+
   (*draw bag to get new letters*)
   loop_at_exit [Key_pressed] event_loop
