@@ -183,6 +183,13 @@ let color_key color phrase x y w h =
   set_color black;
   draw_string phrase
 
+(*[letter_key letter number] prints a string with lower left corner at ([x],[y]) 
+that associates [letter] with [number]*)
+let letter_key letter number x y= 
+  moveto x y;
+  draw_string (Printf.sprintf "%s - %s" letter number)
+
+
 (**[make board ()] sets up the initial board game, which includes the Scrabble
 board itself, a space for the current player's letters, a button to click to
 draw letters, and two spaces for player scores to be displayed. If a key is
@@ -212,7 +219,30 @@ let make_board () =
   color_key 0x0000FF " -3x Letter" 50 510 25 25;
   color_key 0xE88282 " -2x Word" 50 480 25 25;
   color_key 0x8282E8 " -2x Letter" 50 450 25 25;
-  
+  letter_key "A" "1" 50 430;
+  letter_key "B" "3" 50 415;
+  letter_key "C" "3" 50 400;
+  letter_key "D" "2" 50 385;
+  letter_key "E" "1" 50 370;
+  letter_key "F" "4" 50 355;
+  letter_key "G" "2" 50 340;
+  letter_key "H" "4" 50 325;
+  letter_key "K" "5" 50 310;
+  letter_key "L" "1" 50 295;
+  letter_key "M" "3" 50 280;
+  letter_key "N" "1" 50 265;
+  letter_key "Q" "10" 50 250;
+  letter_key "R" "1" 50 235;
+  letter_key "U" "1" 50 220;
+  letter_key "V" "4" 50 205;
+  letter_key "O" "1" 50 190;
+  letter_key "P" "3" 50 175;
+  letter_key "S" "1" 50 160;
+  letter_key "T" "1" 50 145;
+  letter_key "W" "4" 50 130;
+  letter_key "X" "8" 50 115;
+  letter_key "Y" "4" 50 100;
+  letter_key "Z" "10" 50 85;
   (*draws key box*)
 
   draw_rect 180 445 150 100;
