@@ -180,6 +180,12 @@ let grid l h =
   color_grid colors length height
   (*adds colors*) 
 
+(**[alphabet_key x1 x2 top margin] draws the 26 letters of the alphabet
+in the box for the key. The letters are arranged in two rows, one with an
+x-value of [x1] and the other with [x2]. The top of the key box has the 
+value [top] and [margin] is the space between the entries for different
+letters. 
+Requires: x1 < x2. x1, x2, top, margin > 0.*)
 let alphabet_key x1 x2 top margin = 
   moveto x1 top;
   draw_string "Key";
@@ -238,6 +244,10 @@ let alphabet_key x1 x2 top margin =
   moveto x2 (top - 13 * margin);
   draw_string "Z = 10"
 
+(**[color_key x top margin] draws the key for the colors on the board, where
+this portion of the writing has the x-valueof [x], starts at the top line
+with y-value [top], and [margin] is the space between the different entries. 
+Requires: [x], [top], [margin] > 0.*)
 let color_key x top margin = 
   moveto x top;
   draw_string "Dark blue = triple letter";
@@ -245,6 +255,9 @@ let color_key x top margin =
   moveto x (top - margin);
   draw_string "Light blue = triple letter score"
 
+(**[key l h] draws the key for the board, using ratios dependent on the 
+length [l] and height [h] of the overall board. 
+Requires: [l], [h] > 0. *)
 let key l h = 
   let left = l * 1 / 25 in 
   let bottom = h * 1 / 20 in 
@@ -261,6 +274,9 @@ let key l h =
   let top = h * 7 / 25 in 
   color_key x1 top margin 
 
+(**[player_boxes l h num] draws [num] player boxes depending on the length
+[l] and height [h] of the entire board. 
+Requires: [l], [h] > 0. 2 <= [num] <= 4.*)
 let rec player_boxes l h num = 
   if num = 0 then () 
   else  
@@ -299,15 +315,15 @@ let make_board () =
   key b_length b_height;
   (*draws key*)
 
-  let num = 2 in 
+  let num = 4 in 
   (*number of players*)
   player_boxes b_length b_height num;
   (*draws player score boxes*)
 
-  draw_circle 255 80 55; 
-  moveto 230 85;
+  draw_circle (b_length * 18/ 50) (b_height * 3 / 20) (b_height / 10); 
+  moveto (b_length * 34 / 100) (b_height * 3 / 20);
   draw_string "DRAW";
-  moveto 220 70;
+  moveto (b_length * 31 / 100) (b_height * 6 / 50);
   draw_string "98 tiles left";
   (*draw bag to get new letters*)
   loop_at_exit [Key_pressed] event_loop
