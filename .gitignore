@@ -15,4 +15,8 @@ _build
 *.swp
 *~
 \#*\#
+<<<<<<< HEAD
 .DS_Store
+=======
+.DS_Store
+>>>>>>> main
