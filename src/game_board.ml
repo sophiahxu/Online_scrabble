@@ -5,7 +5,7 @@ exception Exit
 (** Raised when the GUI should be closed. *)
 
 (**[graph l h] opens a graph with length [l] and height [h]. 
-Requires: l, h < 0. *)
+Requires: l, h > 0. *)
 let graph l h = 
   open_graph (" " ^ string_of_int l ^ "x" ^ string_of_int h) 
 
@@ -19,26 +19,33 @@ let rec draw_row w h num x y =
     draw_rect x y w h;
     if num > 0 then draw_row w h (num - 1) (x + w) y
 
-(**[color_grid lst l h] fills in the grid at the locations and with the colors
-described in [lst]. Each unit of the grid has length [l] and height [h].*)
-let rec color_grid tiles s =
+(**[color_grid tiles side] adds color to the rectangles as described by 
+[tiles] by using the colors and locations in this list. Each rectangle that
+is colored has a length and width of [side]. 
+Requires: [tiles] is a valid list of tiles that can be colored. 
+[side] > 0.*)
+let rec color_grid tiles side =
   match tiles with 
   | [] -> ()
   | h :: t -> 
     match (color h) with 
     | Some x ->  set_color x;
-    fill_rect (tile_x h) (tile_y h) s s;
-    color_grid t s
-    | None -> color_grid t s
+    fill_rect (tile_x h) (tile_y h) side side;
+    color_grid t side
+    | None -> color_grid t side
     
-let rec grid board_tiles side = 
-  match board_tiles with 
+(**[grid tiles side] draws the rectangles described by [tiles] 
+using [side] as the length and width of each rectangle.
+Requires: [tiles] is a valid list of tiles that can be drawn. 
+[side] > 0.*)
+let rec grid tiles side = 
+  match tiles with 
   | [] -> ()
   | h :: t -> 
     draw_rect (tile_x h) (tile_y h) side side;
     grid t side
 
-(**[alphabet_key x1 x2 top margin] draws the 26 letters of the alphabet
+(*(**[alphabet_key x1 x2 top margin] draws the 26 letters of the alphabet
 in the box for the key. The letters are arranged in two rows, one with an
 x-value of [x1] and the other with [x2]. The top of the key box has the 
 value [top] and [margin] is the space between the entries for different
@@ -100,7 +107,7 @@ let alphabet_key x1 x2 top margin =
   moveto x2 (top - 12 * margin);
   draw_string "Y = 4";
   moveto x2 (top - 13 * margin);
-  draw_string "Z = 10"
+  draw_string "Z = 10" 
 
 (**[color_key x top margin] draws the key for the colors on the board, where
 this portion of the writing has the x-valueof [x], starts at the top line
@@ -130,7 +137,7 @@ let key l h =
   moveto x1 (h * 9 / 25); 
   lineto (left + l / 5 - l / 50) (h * 9 / 25);
   let top = h * 7 / 25 in 
-  color_key x1 top margin 
+  color_key x1 top margin *)
 
 (**[player_boxes l h num] draws [num] player boxes depending on the length
 [l] and height [h] of the entire board. 
@@ -174,7 +181,7 @@ let make_board () =
    (b_height * 1 / 20);
   (*draws the tiles*) 
 
-  key b_length b_height;
+  (*key b_length b_height; *)
   (*draws key*)
 
   let num = 4 in 
