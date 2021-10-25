@@ -4,105 +4,97 @@ open Board
 exception Exit
 (** Raised when the GUI should be closed. *)
 
-(**[graph l h] opens a graph with length [l] and height [h]. 
-Requires: l, h > 0. *)
-let graph l h = 
-  open_graph (" " ^ string_of_int l ^ "x" ^ string_of_int h) 
+(**[graph l h] opens a graph with length [l] and height [h]. Requires:
+   l, h > 0. *)
 
-(**[draw_row w h num x y] draws a row of [num] rectangles of width [w] and 
-height [h]. The lower left corner of the row begins at the coordinates
-([x], [y])
-Requires: [w], [h] > 0. [num], [x], [y] >= 0.*)
-let rec draw_row w h num x y = 
-  if num <= 0 then ()
-  else 
-    draw_rect x y w h;
-    if num > 0 then draw_row w h (num - 1) (x + w) y
+(**[draw_row w h num x y] draws a row of [num] rectangles of width [w]
+   and height [h]. The lower left corner of the row begins at the
+   coordinates ([x], [y]) Requires: [w], [h] > 0. [num], [x], [y] >= 0.*)
+let rec draw_row w h num x y =
+  if num <= 0 then () else draw_rect x y w h;
+  if num > 0 then draw_row w h (num - 1) (x + w) y
 
-(**[color_grid tiles side] adds color to the rectangles as described by 
-[tiles] by using the colors and locations in this list. Each rectangle that
-is colored has a length and width of [side]. 
-Requires: [tiles] is a valid list of tiles that can be colored. 
-[side] > 0.*)
+(**[color_grid tiles side] adds color to the rectangles as described by
+   [tiles] by using the colors and locations in this list. Each
+   rectangle that is colored has a length and width of [side]. Requires:
+   [tiles] is a valid list of tiles that can be colored. [side] > 0.*)
 let rec color_grid tiles side =
-  match tiles with 
+  match tiles with
   | [] -> ()
-  | h :: t -> 
-    match (color h) with 
-    | Some x ->  set_color x;
-    fill_rect (tile_x h) (tile_y h) side side;
-    color_grid t side
-    | None -> color_grid t side
-    
-(**[grid tiles side] draws the rectangles described by [tiles] 
-using [side] as the length and width of each rectangle.
-Requires: [tiles] is a valid list of tiles that can be drawn. 
-[side] > 0.*)
-let rec grid tiles side = 
-  match tiles with 
-  | [] -> ()
-  | h :: t -> 
-    draw_rect (tile_x h) (tile_y h) side side;
-    grid t side
+  | h :: t -> (
+      match color h with
+      | Some x ->
+          set_color x;
+          fill_rect (tile_x h) (tile_y h) side side;
+          color_grid t side
+      | None -> color_grid t side)
 
-(**[player_boxes l h num] draws [num] player boxes depending on the length
-[l] and height [h] of the entire board. 
-Requires: [l], [h] > 0. 2 <= [num] <= 4.*)
-let rec player_boxes l h num = 
-  if num = 0 then () 
-  else  
-    let x = l * 13 / 50 in 
-    let y = (h * 1 / 6) * (4 - num)  + (h * 3 / 10) in 
+(**[grid tiles side] draws the rectangles described by [tiles] using
+   [side] as the length and width of each rectangle. Requires: [tiles]
+   is a valid list of tiles that can be drawn. [side] > 0.*)
+let rec grid tiles side =
+  match tiles with
+  | [] -> ()
+  | h :: t ->
+      draw_rect (tile_x h) (tile_y h) side side;
+      grid t side
+
+(**[player_boxes l h num] draws [num] player boxes depending on the
+   length [l] and height [h] of the entire board. Requires: [l], [h] >
+   0. 2 <= [num] <= 4.*)
+let rec player_boxes l h num =
+  if num = 0 then ()
+  else
+    let x = l * 13 / 50 in
+    let y = (h * 1 / 6 * (4 - num)) + (h * 3 / 10) in
     draw_rect x y (l * 1 / 5) (h * 3 / 20);
-    moveto (x + l / 50) (y + h * 3 / 25);
+    moveto (x + (l / 50)) (y + (h * 3 / 25));
     draw_string ("Player " ^ string_of_int num);
     if num > 0 then player_boxes l h (num - 1)
 
-(** [event_loop st] tracks any events that occur on the game board and exits
-when a key is pressed. 
-Raises: [Exit] if a key is pressed. *)
-let event_loop st =
-  if st.keypressed then raise Exit
-
-(*[color_key color phrase x y w h] draws a rectangle with lower left corner 
-at ([x],[y]) with width [w] and height [h] and colors it with [color]. 
-[phrase] is displayed to the right of the rectangle*)
+(*[color_key color phrase x y w h] draws a rectangle with lower left
+  corner at ([x],[y]) with width [w] and height [h] and colors it with
+  [color]. [phrase] is displayed to the right of the rectangle*)
 let color_key color phrase x y w h =
-  set_color color; 
-  draw_rect x y w h ;
+  set_color color;
+  draw_rect x y w h;
   fill_rect x y w h;
-  moveto (x + w) (y + h/2);
+  moveto (x + w) (y + (h / 2));
   set_color black;
   draw_string phrase
 
-(*[letter_key letter number] prints a string with lower left corner at ([x],[y]) 
-that associates [letter] with [number]*)
-let letter_key letter number x y= 
+(*[letter_key letter number] prints a string with lower left corner at
+  ([x],[y]) that associates [letter] with [number]*)
+let letter_key letter number x y =
   moveto x y;
   draw_string (Printf.sprintf "%s - %s" letter number)
 
+(**[make board ()] sets up the initial board game, which includes the
+   Scrabble board itself, a space for the current player's letters, a
+   button to click to draw letters, and two spaces for player scores to
+   be displayed. If a key is pressed, the GUI closes. *)
+let make_board () =
+  let b_length = 800 in
+  (*must be a multiple of 100*)
+  let b_height = 600 in
 
-(**[make board ()] sets up the initial board game, which includes the Scrabble
-board itself, a space for the current player's letters, a button to click to
-draw letters, and two spaces for player scores to be displayed. If a key is
-pressed, the GUI closes. *)
-let make_board () = 
-  let b_length = 800 in (*must be a multiple of 100*)
-  let b_height = 600 in (*must be a multiple of 100*)
+  (*must be a multiple of 100*)
+  let board = board_setup b_length b_height in
 
-  let board = board_setup b_length b_height in 
-  graph b_length b_height ;
   (*sets up graph*)
-
   grid (tiles board) (side board);
   color_grid (tiles board) (side board);
+
   (*draws colored grid*)
-
   set_color black;
-  draw_row (b_length * 1 / 15) (b_length * 1 / 15) 7 (b_length * 57/100)
-   (b_height * 1 / 20);
-  (*draws the tiles*) 
+  draw_row
+    (b_length * 1 / 15)
+    (b_length * 1 / 15)
+    7
+    (b_length * 57 / 100)
+    (b_height * 1 / 20);
 
+  (*draws the tiles*)
   draw_rect 30 30 125 565;
   moveto 50 575;
   draw_string "Key";
@@ -134,18 +126,15 @@ let make_board () =
   letter_key "X" "8" 50 115;
   letter_key "Y" "4" 50 100;
   letter_key "Z" "10" 50 85;
-  (*draws key box*)
 
-  let num = 4 in 
+  (*draws key box*)
+  let num = 4 in
   (*number of players*)
   player_boxes b_length b_height num;
-  (*draws player score boxes*)
 
-  draw_circle (b_length * 18/ 50) (b_height * 3 / 20) (b_height / 10); 
+  (*draws player score boxes*)
+  draw_circle (b_length * 18 / 50) (b_height * 3 / 20) (b_height / 10);
   moveto (b_length * 34 / 100) (b_height * 3 / 20);
   draw_string "DRAW";
   moveto (b_length * 31 / 100) (b_height * 6 / 50);
-  draw_string "98 tiles left";
-
-  (*draw bag to get new letters*)
-  loop_at_exit [Key_pressed] event_loop
+  draw_string "98 tiles left"
