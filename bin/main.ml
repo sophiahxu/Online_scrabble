@@ -6,6 +6,6 @@ open Game
     GUI closes. *)
 let main () =
   try App.update Loading_initial with
-  | Exit -> ()
+  | Game.App.Exit -> ()
 
 let () = main ()
