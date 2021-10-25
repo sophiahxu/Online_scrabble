@@ -1,5 +1,4 @@
 type b
-<<<<<<< HEAD
 (**The type of the board.*)
 
 type t
@@ -28,23 +27,3 @@ val color : t -> int option
 
 val letter : t -> char 
 (**[letter a] is the letter on tile [a].*)
-=======
-
-type t
-
-val board_setup : int -> int -> b
-
-val side : b -> int
-
-val tiles : b -> t list
-
-val tile_x : t -> int
-
-val tile_y : t -> int
-
-val color : t -> int option
-
-val letter : t -> char
-
-val name : t -> string
->>>>>>> main

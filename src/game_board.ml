@@ -45,100 +45,6 @@ let rec grid tiles side =
     draw_rect (tile_x h) (tile_y h) side side;
     grid t side
 
-(*(**[alphabet_key x1 x2 top margin] draws the 26 letters of the alphabet
-in the box for the key. The letters are arranged in two rows, one with an
-x-value of [x1] and the other with [x2]. The top of the key box has the 
-value [top] and [margin] is the space between the entries for different
-letters. 
-Requires: x1 < x2. x1, x2, top, margin > 0.*)
-let alphabet_key x1 x2 top margin = 
-  moveto x1 top;
-  draw_string "Key";
-
-  moveto x1 (top - margin);
-  draw_string "A = 1";
-  moveto x1 (top - 2 * margin);
-  draw_string "B = 3";
-  moveto x1 (top - 3 * margin);
-  draw_string "C = 3";
-  moveto x1 (top - 4 * margin);
-  draw_string "D = 2";
-  moveto x1 (top - 5 * margin);
-  draw_string "E = 1";
-  moveto x1 (top - 6 * margin);
-  draw_string "F = 4";
-  moveto x1 (top - 7 * margin);
-  draw_string "G = 2";
-  moveto x1 (top - 8 * margin);
-  draw_string "H = 4";
-  moveto x1 (top - 9 * margin);
-  draw_string "I = 1";
-  moveto x1 (top - 10 * margin);
-  draw_string "J = 8";
-  moveto x1 (top - 11 * margin);
-  draw_string "K = 5";
-  moveto x1 (top - 12 * margin);
-  draw_string "L = 1";
-  moveto x1 (top - 13 * margin);
-  draw_string "M = 3";
-
-  moveto x2 (top - margin);
-  draw_string "N = 1";
-  moveto x2 (top -  2 * margin);
-  draw_string "O = 1";
-  moveto x2 (top - 3 * margin);
-  draw_string "P = 3";
-  moveto x2 (top - 4 * margin);
-  draw_string "Q = 10";
-  moveto x2 (top - 5 * margin);
-  draw_string "R = 1";
-  moveto x2 (top - 6 * margin);
-  draw_string "S = 1";
-  moveto x2 (top - 7 * margin);
-  draw_string "T = 1";
-  moveto x2 (top - 8 * margin);
-  draw_string "U = 1";
-  moveto x2 (top - 9 * margin);
-  draw_string "V = 4";
-  moveto x2 (top - 10 * margin);
-  draw_string "W = 4";
-  moveto x2 (top - 11 * margin);
-  draw_string "X = 8";
-  moveto x2 (top - 12 * margin);
-  draw_string "Y = 4";
-  moveto x2 (top - 13 * margin);
-  draw_string "Z = 10" 
-
-(**[color_key x top margin] draws the key for the colors on the board, where
-this portion of the writing has the x-valueof [x], starts at the top line
-with y-value [top], and [margin] is the space between the different entries. 
-Requires: [x], [top], [margin] > 0.*)
-let color_key x top margin = 
-  moveto x top;
-  draw_string "Dark blue = triple letter";
-
-  moveto x (top - margin);
-  draw_string "Light blue = triple letter score"
-
-(**[key l h] draws the key for the board, using ratios dependent on the 
-length [l] and height [h] of the overall board. 
-Requires: [l], [h] > 0. *)
-let key l h = 
-  let left = l * 1 / 25 in 
-  let bottom = h * 1 / 20 in 
-  draw_rect left bottom (l * 1 / 5) (h * 9 / 10) ;
-
-  let x1 = left + l / 50 in 
-  let x2 = left + (l / 10) + l / 50 in 
-  let margin = h * 1/25 in 
-  let top = h * 23 / 25 in 
-
-  alphabet_key x1 x2 top margin;
-  moveto x1 (h * 9 / 25); 
-  lineto (left + l / 5 - l / 50) (h * 9 / 25);
-  let top = h * 7 / 25 in 
-  color_key x1 top margin *)
-
 (**[player_boxes l h num] draws [num] player boxes depending on the length
 [l] and height [h] of the entire board. 
 Requires: [l], [h] > 0. 2 <= [num] <= 4.*)
@@ -191,21 +97,12 @@ let make_board () =
   grid (tiles board) (side board);
   color_grid (tiles board) (side board);
   (*draws colored grid*)
-<<<<<<< HEAD
-
-  (*colorful b_length b_height; *)
-=======
->>>>>>> main
 
   set_color black;
   draw_row (b_length * 1 / 15) (b_length * 1 / 15) 7 (b_length * 57/100)
    (b_height * 1 / 20);
   (*draws the tiles*) 
 
-<<<<<<< HEAD
-  (*key b_length b_height; *)
-  (*draws key*)
-=======
   draw_rect 30 30 125 565;
   moveto 50 575;
   draw_string "Key";
@@ -238,7 +135,6 @@ let make_board () =
   letter_key "Y" "4" 50 100;
   letter_key "Z" "10" 50 85;
   (*draws key box*)
->>>>>>> main
 
   let num = 4 in 
   (*number of players*)
