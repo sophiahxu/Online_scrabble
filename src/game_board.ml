@@ -118,22 +118,24 @@ let make_board () =
   letter_key "F" "4" 50 355;
   letter_key "G" "2" 50 340;
   letter_key "H" "4" 50 325;
-  letter_key "K" "5" 50 310;
-  letter_key "L" "1" 50 295;
-  letter_key "M" "3" 50 280;
-  letter_key "N" "1" 50 265;
-  letter_key "Q" "10" 50 250;
-  letter_key "R" "1" 50 235;
-  letter_key "U" "1" 50 220;
-  letter_key "V" "4" 50 205;
-  letter_key "O" "1" 50 190;
-  letter_key "P" "3" 50 175;
-  letter_key "S" "1" 50 160;
-  letter_key "T" "1" 50 145;
-  letter_key "W" "4" 50 130;
-  letter_key "X" "8" 50 115;
-  letter_key "Y" "4" 50 100;
-  letter_key "Z" "10" 50 85;
+  letter_key "J" "8" 50 310;
+  letter_key "I" "1" 50 295;
+  letter_key "K" "5" 50 280;
+  letter_key "L" "1" 50 265;
+  letter_key "M" "3" 50 250;
+  letter_key "N" "1" 50 235;
+  letter_key "Q" "10" 50 220;
+  letter_key "R" "1" 50 205;
+  letter_key "U" "1" 50 190;
+  letter_key "V" "4" 50 175;
+  letter_key "O" "1" 50 160;
+  letter_key "P" "3" 50 145;
+  letter_key "S" "1" 50 130;
+  letter_key "T" "1" 50 115;
+  letter_key "W" "4" 50 100;
+  letter_key "X" "8" 50 85;
+  letter_key "Y" "4" 50 70;
+  letter_key "Z" "10" 50 55;
   (*draws key box*)
 
   let num = 4 in 
