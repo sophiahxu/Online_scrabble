@@ -4,9 +4,6 @@ open Board
 exception Exit
 (** Raised when the GUI should be closed. *)
 
-(**[graph l h] opens a graph with length [l] and height [h]. Requires:
-   l, h > 0. *)
-
 (**[draw_row w h num x y] draws a row of [num] rectangles of width [w]
    and height [h]. The lower left corner of the row begins at the
    coordinates ([x], [y]) Requires: [w], [h] > 0. [num], [x], [y] >= 0.*)
