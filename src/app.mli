@@ -1,20 +1,7 @@
 exception Exit
 (** Raised when the GUI should be closed. *)
 
-type info
-(**[info] represents gameplay information while the game is in state
-   [Active]*)
-
-(**[state] represents the state of the game*)
-type state =
-  | Loading_initial
-  | Initial
-  | Loading_active
-  | Active of info
-  | Loading_complete
-  | Complete
-
-val update : state -> unit
+val update : State.t -> unit
 (**[update state] updates the game each frame depending on the game
    state.
 

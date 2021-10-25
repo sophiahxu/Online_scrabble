@@ -1,19 +1,10 @@
 open Graphics
 open Board
+open State
 
 exception Exit
 
-type info = { board : Board.b }
-
-type state =
-  | Loading_initial
-  | Initial
-  | Loading_active
-  | Active of info
-  | Loading_complete
-  | Complete
-
-let rec update (st : state) =
+let rec update (st : State.t) =
   match st with
   | Loading_initial -> loading_initial_update st
   | Initial -> initial_update st
@@ -60,7 +51,7 @@ and initial_update st =
 and loading_active_update st =
   clear_graph ();
   Game_board.make_board ();
-  update (Active { board = Board.board_setup 0 0 })
+  update (Active (State.init_info ()))
 
 (**[active_update st] updates the game during game state [Active].*)
 and active_update st =
