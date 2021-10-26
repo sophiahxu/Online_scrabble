@@ -5,7 +5,8 @@ type t
 (**The type of a tile.*)
 
 val board_setup : int -> int -> b
-(**[board_setup x y] is the board with total length [x] and height [y].*)
+(**[board_setup x y] is the board with total length [x] and height [y].
+   Requires that x, y >= 0.*)
 
 val side : b -> int
 (**[side x] is the length of a single tile on the board.*)
