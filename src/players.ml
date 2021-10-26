@@ -34,6 +34,25 @@ let player_points player = player.point_total
 (*[player_tiles player] returns a list of the [players] tiles*)
 let player_tiles player = player.player_tiles
 
+(*[make tile letter location side] creates a tile with [letter], [location],
+and [side]*)
+let make_tile letter location side = 
+  {
+    letter = letter;
+    location = location;
+    side = side
+  }
+
+(*[add_tile player tile] adds tile to [player]'s current tile list. If the 
+current tile list is greater than 7, [player]'s tile list will remain the same*)
+let add_tile player tile = let current_tiles = player_tiles player in 
+if List.length current_tiles < 7 then 
+  match current_tiles with 
+| [] -> {player with player_tiles = [tile]} 
+| h :: t -> {player with player_tiles = tile :: current_tiles}
+else {player with player_tiles = current_tiles}
+ 
+
 (*[change_location player tile x y] changes the location of [tile] to [(x,y)] 
 inside the tile list of [player]*)
 let change_location player tile x y = let tile_list = player_tiles player in 
