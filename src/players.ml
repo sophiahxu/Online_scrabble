@@ -63,12 +63,10 @@ let y_location tile = match tile.location with
 | (_, y) -> y
 
 (*[draw_tiles player] draws [player]'s tiles at each tile's respective location*)
-let draw_tiles player = let current_tiles = player_tiles player in 
+let rec draw_tiles player = let current_tiles = player_tiles player in 
 match current_tiles with
 | [] -> draw_string ""
-| [h] -> let x = x_location h in let y = y_location h in 
-moveto x y; draw_char h.letter
 | h :: t -> let x = x_location h in let y = y_location h in 
-moveto x y; draw_char h.letter
+moveto x y; draw_char h.letter; draw_tiles {player with player_tiles = t}
 
 
