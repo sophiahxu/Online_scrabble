@@ -28,6 +28,6 @@ val add_tile : player -> player_tile -> player
 (*[add_tile p pt] adds tile [pt] to player [p]'s current tiles.
   Requires: player [p] currently has not more than 7 tiles*)
 
-val change_location : player -> int -> int -> int -> player_tile
-(*[change_location p pt x y] sets player [p]'s [pt] tile to be placed at
-  location [(x,y)]*)
+val draw_tiles : player -> unit
+(*[draw_tiles p] draws the tiles of [p] at each tiles specified
+  location*)

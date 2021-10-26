@@ -1,3 +1,5 @@
+open Graphics 
+
 type player_tile = 
 {
 letter: char;
@@ -51,12 +53,22 @@ if List.length current_tiles < 7 then
 | [] -> {player with player_tiles = [tile]} 
 | h :: t -> {player with player_tiles = tile :: current_tiles}
 else {player with player_tiles = current_tiles}
- 
 
-(*[change_location player tile x y] changes the location of [tile] to [(x,y)] 
-inside the tile list of [player]*)
-let change_location player tile x y = let tile_list = player_tiles player in 
-let correct_tile = List.nth tile_list tile in 
-{correct_tile with location = (x,y)}
+(*[x_location tile] returns the x coordinate of [tile]*)
+let x_location tile = match tile.location with 
+| (x, _) -> x
+
+(*[y_location tile] returns the y coordinate of [tile]*)
+let y_location tile = match tile.location with 
+| (_, y) -> y
+
+(*[draw_tiles player] draws [player]'s tiles at each tile's respective location*)
+let draw_tiles player = let current_tiles = player_tiles player in 
+match current_tiles with
+| [] -> draw_string ""
+| [h] -> let x = x_location h in let y = y_location h in 
+moveto x y; draw_char h.letter
+| h :: t -> let x = x_location h in let y = y_location h in 
+moveto x y; draw_char h.letter
 
 
