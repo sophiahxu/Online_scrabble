@@ -21,6 +21,10 @@ point_total = 0;
 player_tiles = [];
 }
 
+(*[add_points player points] adds [points] to [player]'s current point total*)
+let add_points player points = let original = player.point_total in 
+{player with point_total = original + points}
+ 
 (*[player_name player] returns the name of [player]*)
 let player_name player = player.name
 
@@ -34,6 +38,6 @@ let player_tiles player = player.player_tiles
 inside the tile list of [player]*)
 let change_location player tile x y = let tile_list = player_tiles player in 
 let correct_tile = List.nth tile_list tile in 
-correct_tile.location = (x,y)
+{correct_tile with location = (x,y)}
 
 
