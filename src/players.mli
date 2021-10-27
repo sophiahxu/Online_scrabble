@@ -6,7 +6,7 @@ type player
 
 val init_player : string -> player
 (*[init_player s] initializes a player with name [s], who starts with
-  zero points and zero tiles*)
+  zero points and seven empty tiles*)
 
 val add_points : player -> int -> player
 (*[add_points p pt] adds [pt] points to player [p]*)
