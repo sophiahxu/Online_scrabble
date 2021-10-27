@@ -55,4 +55,3 @@ if status.button then
   let capture = get_image x y 20 20 in paste capture;
 set_color white;
 fill_rect x y 20 20
-
