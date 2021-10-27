@@ -118,6 +118,8 @@ let player_names name expected_output player =
     assert_equal expected_output (player_name player)
     ~printer:(fun x -> x)
 
+(*[player_tiles name expected_output player] constructs an OUnit test named
+   [name] that asserts the quality of [expected_output] with the tile list of [player]*)
 let player_tiles name expected_output player = 
   name >:: fun _ -> 
     assert_equal expected_output (player_tiles player)
