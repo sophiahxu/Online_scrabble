@@ -5,7 +5,7 @@ open Game
     the play screen when the button is pressed. If a key is pressed, the
     GUI closes. *)
 let main () =
-  try App.update Loading_initial with
+  try App.start () with
   | Game.App.Exit -> ()
 
 let () = main ()

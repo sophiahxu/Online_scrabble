@@ -64,3 +64,5 @@ and loading_complete_update st = ()
 
 (**[complete_update st] updates the game during game state [Complete].*)
 and complete_update st = ()
+
+let start () = update Loading_initial

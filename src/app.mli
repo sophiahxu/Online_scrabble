@@ -30,3 +30,6 @@ val update : State.t -> unit
    [Complete].
 
    [Complete]: The game is over and there is winner.*)
+
+val start : unit -> unit
+(** [start ()] initializes and starts the application. *)
