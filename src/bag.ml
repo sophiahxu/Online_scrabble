@@ -34,9 +34,9 @@ let rec remove_helper (tiles : bag_tile list) (letter : string) :
 let remove (bag : b) (letter : string) : b =
   { count = bag.count - 1; tiles = remove_helper bag.tiles letter }
 
-let bag_count (bag : b) : int = bag.count
+let count (bag : b) : int = bag.count
 
-let init_bag () =
+let init () =
   {
     count = 98;
     tiles =

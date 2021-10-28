@@ -15,5 +15,5 @@ let init () =
   {
     board = board_setup 0 0;
     players = [ init_player "1" ];
-    bag = Bag.init_bag ();
+    bag = Bag.init ();
   }
