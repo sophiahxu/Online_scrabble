@@ -71,7 +71,7 @@ let init_key () =
 let init () =
   let players = [ init_player "1" ] in
   {
-    board = board_setup 0 0;
+    board = board_setup 800 600;
     players;
     bag = Bag.init ();
     key = init_key ();

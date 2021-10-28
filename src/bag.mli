@@ -12,6 +12,10 @@ val remove : b -> string -> b
 val count : b -> int
 (** [count bag] is the number of tiles in [bag]. *)
 
+val count_letter : b -> string -> int
+(** [count_letter bag letter] is the number of tiles in [bag] that are
+    [letter]. Requires: [letter] is a capital letter. *)
+
 val init : unit -> b
 (** [init] is the initial scrabble bag filled with 98 tiles according to
     official scrabble rules (minus the two blank tiles). *)
