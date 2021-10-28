@@ -1,11 +1,9 @@
-open Graphics
 open Game
 
-(** [main ()] initializes and maintains the home screen and switches to
-    the play screen when the button is pressed. If a key is pressed, the
-    GUI closes. *)
+(** [main ()] starts the game, and it closes the game when a key is
+    pressed. *)
 let main () =
   try App.start () with
-  | Game.App.Exit -> ()
+  | App.Exit -> ()
 
 let () = main ()
