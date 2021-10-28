@@ -150,24 +150,41 @@ let players_tests =
       10 player2;
     player_names_test "player has name Player 1" "Player 1" player;
     player_names_test "empty string player" "" empty_player;
-    player_tiles_test "player has no tiles" [] player;
-    player_tiles_test "player with tile1" [ tile1 ] player_w_tile1;
-    player_tiles_test "player w tile1 and tile2" [ tile2; tile1 ]
-      player_w_2tiles;
+    (*player_tiles_test "player has no tiles" [] player;
+      player_tiles_test "player with tile1" [ tile1 ] player_w_tile1;
+      player_tiles_test "player w tile1 and tile2" [ tile2; tile1 ]
+      player_w_2tiles;*)
   ]
 
+(**[count_test name expected_output b] constructs an OUnit test named
+   [name] that asserts the quality of [expected_output] with count [b]*)
 let count_test name expected_output b =
   name >:: fun _ ->
   assert_equal expected_output (count b) ~printer:string_of_int
+
+(**[count_letter_test name expected_output b] constructs an OUnit test
+   named [name] that asserts the quality of [expected_output] with
+   count_letter [b] [letter]*)
+let count_letter_test name expected_output b letter =
+  name >:: fun _ ->
+  assert_equal expected_output (count_letter b letter)
+    ~printer:string_of_int
 
 let bag = init ()
 
 let bag2 = remove bag "A"
 
+let bag3 = remove bag2 "Z"
+
 let bag_tests =
   [
     count_test "New bag has 98 letters" 98 bag;
+    count_letter_test "New bag has 9 'A's" 9 bag "A";
     count_test "Bag with 1 'A' removed has 97 letters" 97 bag2;
+    count_letter_test "Bag with 1 'A' removed has 8'A's" 8 bag2 "A";
+    count_test "Bag with 'A' and 'Z' removed has 96 letters" 96 bag3;
+    count_letter_test "Bag with 'A' and 'Z' removed has 0 'Z's" 0 bag3
+      "Z";
   ]
 
 let tests =
