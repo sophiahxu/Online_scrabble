@@ -25,7 +25,7 @@ type t = {
   turn : player; (* player whose turn it is currently *)
 }
 
-let draw_tile (state : t) (p : player) : unit = ()
+let draw_tile (state : t) (p : player) : t = state
 
 (** [init_key () is the scrabble scoring key] *)
 let init_key () =
