@@ -1,19 +1,168 @@
 Installation Process: 
-* Download .zip file of source code
-* $ cd /path/to/scrabble/folder
-* $ update opam
-* Make sure graphics package is installed
-  *opam install graphics
+
+1) Download .zip file of source code
+
+2) $ cd /path/to/scrabble/folder
+
+    * $ update opam
+
+    * Make sure graphics package is installed.
+    
+        opam install graphics
 
   *Note* Windows might have an issue displaying the GUI: 
-  In order to display the GUI from a WSL, 
-  host an ssh server on your WSL with X11 forwarding enabled. 
-  Install and launch an XServer (we use Xming) on your windows machine. 
-  Install and open PuTTY on Windows and connect to your linux server 
-  with X11 forwarding enabled and set to localhost:0.0. 
-  Proceed through all other instructions in the PuTTY terminal window.
+  In order to display the GUI from a WSL, host an ssh server on your WSL with 
+  X11 forwarding enabled. Install and launch an XServer (we use Xming) on your 
+  windows machine. Install and open PuTTY on Windows and connect to your linux
+  server with X11 forwarding enabled and set to localhost:0.0. For detailed 
+  instructions, see the Windows setup instructions below. If you've already
+  completed the initial setup, follow the reccuring setup for windows every time
+  you wish to play scrabble.
 
+--------------------------------------------------------------------------------
 To Launch Scrabble Game:
-* $ cd /path/to/scrabble/folder
-* $ make play
 
+1) $ cd /path/to/scrabble/folder
+
+2) $ make play
+
+--------------------------------------------------------------------------------
+Windows Initial Setup Instructions:
+
+1) Install XMing to your Windows system.
+	
+    * Install XMing from this link: https://sourceforge.net/projects/xming/.
+    
+    * Keep the default settings throughout installation.
+    
+    * Launch XMing
+
+        * You can tell XMing is running if the icon appears in your system tray
+        (depending on your system, the tray appears at the bottom of your
+        screen, and Xming will either be in the bottom bar or inside a menu that
+        can be accessed through the "^" on the bottom right hand side of the
+        bottom bar).
+
+2) Host an ssh server on your WSL.
+
+    * Open ubuntu and install openssh-server with this command:
+      
+        sudo apt install openssh-server
+
+    * Open your ssh settings:
+      
+        sudo nano /etc/ssh/sshd_config
+
+    * Find the following (separate) lines of the settings:
+
+        #PasswordAuthentication yes
+        
+        #X11Forwarding no
+    
+    * Edit the above lines of the settings to what is listed below:
+      
+        PasswordAuthentication yes
+        
+        X11Forwarding yes
+
+    * Save the settings with Ctrl+x, then type "y" to save to the buffer, then 
+      press "enter" to save the changes to the listed file.
+
+    * Start your server with the following command:
+      
+        sudo service ssh start
+
+3) Find your IP address on your WSL.
+
+    * Install net-tools with the following command on your WSL:
+      
+        apt install net-tools
+
+    * Run the following commend to get your IP address:
+    
+        ifconfig
+
+    * The output should start with something like the following. Your IP address 
+      is the one marked by X's below.
+      
+        eth0: flags=----<UP,BROADCAST,RUNNING,MULTICAST>  mtu ----
+            inet XXX.XX.XX.XXX  netmask ---.---.---.-  broadcast ---.--.--.---
+
+4) Install PuTTY to your Windows system.
+
+    * Install PuTTY from this link: https://sourceforge.net/projects/xming/.
+
+    * Keep the default settings throughout installation.
+    
+    * Launch PuTTY.
+
+    * Set up your connection settings.
+    
+        * Copy and Paste your IP address obtained in step 3 to "Host Name (or IP
+        address)".
+
+        * Make sure "Connection type" is set to "SSH".
+
+        * Using the lefthand menu, navigate to "Connection" - "SSH" - "X11".
+
+        * Check the box that reads "Enable X11 forwarding".
+
+        * Set "X display location" to "localhost:0.0"
+
+        * Using the lefthand menu, navigate back to "Session".
+
+        * Under "Saved Sessions" type a name for your settings and save them.
+
+    * Click "open".
+
+    * If there is a popup over the PuTTY terminal, select "accept". Input your 
+      ubuntu username, and then your ubuntu password.
+
+5) From your PuTTY terminal, follow the instructions above to launch the 
+   scrabble game.
+
+--------------------------------------------------------------------------------
+Windows recurring setup instructions (to set up your server before every
+scrabble session):
+
+1) Make sure XMing is running, if not launch XMing.
+	
+    * You should only have to relaunch XMing every time you shut down your
+      computer.
+
+    * You can tell XMing is running if the icon appears in your system tray
+      (depending on your system, the tray appears at the bottom of your screen, 
+      and Xming will either be in the bottom bar or inside a menu that can be 
+      accessed through the "^" on the bottom right hand side of the bottom bar).
+
+2) Make sure your ssh server is running.
+	
+    * You should only have to restart your server every time you shut down your
+    computer.	
+
+    * Run the following command to see if your server is running:
+      
+        service ssh status
+    
+    * If it is still running, you can use the same server settings in PuTTY and 
+      you are all set with step 2, otherwise you have to start the server again 
+      with the following command:
+
+        sudo service ssh start
+
+    * Obtain your new IP address using the following command:
+    
+        ifconfig
+
+3) Connect to your ssh server through PuTTY.
+
+    * Open PuTTY. If you did not have to restart your server, you can simply 
+      "load" the previously saved server settings and click "open". Otherwise,
+      load the previous settings, and update the IP address to match your new IP
+      address obtained in step 2. Save your new settings and click "open".
+
+    * If there is a popup over the PuTTY terminal, select "accept". Input your
+      ubuntu username, and then your ubuntu password.
+
+4) From your PuTTY terminal, follow the instructions above to launch the 
+   scrabble game.
