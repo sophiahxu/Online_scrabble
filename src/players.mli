@@ -23,11 +23,7 @@ val player_tiles : player -> player_tile list
 val num_tiles : player -> int
 (**[num_tiles p] is the number of tiles in player [p]'s hand.*)
 
-val make_tile : string -> int * int -> int -> player_tile
-(**[make_tile l lo s] makes a tile representing letter [l], with the
-   tile placed at location [lo], and a tile length of [s]*)
-
-val add_tile : player -> player_tile -> player
+val add_tile : player -> string -> player
 (**[add_tile p pt] adds tile [pt] to player [p]'s current tiles.
    Requires: player [p] currently has not more than 7 tiles*)
 
