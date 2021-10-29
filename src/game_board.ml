@@ -74,7 +74,6 @@ let make_board () =
   let b_length = 800 in
   (*must be a multiple of 100*)
   let b_height = 600 in
-
   (*must be a multiple of 100*)
   let board = board_setup b_length b_height in
 
