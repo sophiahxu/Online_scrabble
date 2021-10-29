@@ -10,31 +10,19 @@ exception Exit
 let rec draw_row w h num x y =
   if num <= 0 then () else draw_rect x y w h;
   if num > 0 then draw_row w h (num - 1) (x + w) y
-
-(**[color_grid tiles side] adds color to the rectangles as described by
-   [tiles] by using the colors and locations in this list. Each
+(* (**[color_grid tiles side] adds color to the rectangles as described
+   by [tiles] by using the colors and locations in this list. Each
    rectangle that is colored has a length and width of [side]. Requires:
    [tiles] is a valid list of tiles that can be colored. [side] > 0.*)
-let rec color_grid tiles side =
-  match tiles with
-  | [] -> ()
-  | h :: t -> (
-      match color h with
-      | Some x ->
-          set_color x;
-          fill_rect (tile_x h) (tile_y h) side side;
-          color_grid t side
-      | None -> color_grid t side)
+   let rec color_grid tiles side = match tiles with | [] -> () | h :: t
+   -> ( match color h with | Some x -> set_color x; fill_rect (tile_x h)
+   (tile_y h) side side; color_grid t side | None -> color_grid t side)
 
-(**[grid tiles side] draws the rectangles described by [tiles] using
+   (**[grid tiles side] draws the rectangles described by [tiles] using
    [side] as the length and width of each rectangle. Requires: [tiles]
-   is a valid list of tiles that can be drawn. [side] > 0.*)
-let rec grid tiles side =
-  match tiles with
-  | [] -> ()
-  | h :: t ->
-      draw_rect (tile_x h) (tile_y h) side side;
-      grid t side
+   is a valid list of tiles that can be drawn. [side] > 0.*) let rec
+   grid tiles side = match tiles with | [] -> () | h :: t -> draw_rect
+   (tile_x h) (tile_y h) side side; grid t side *)
 
 (**[player_boxes l h num] draws [num] player boxes depending on the
    length [l] and height [h] of the entire board. Requires: [l], [h] >
@@ -74,12 +62,12 @@ let make_board () =
   let b_length = 800 in
   (*must be a multiple of 100*)
   let b_height = 600 in
-  (*must be a multiple of 100*)
-  let board = board_setup b_length b_height in
 
-  (*sets up graph*)
-  grid (tiles board) (side board);
-  color_grid (tiles board) (side board);
+  (*must be a multiple of 100*)
+  (*let board = board_setup b_length b_height in
+
+    (*sets up graph*) grid (tiles board) (side board); color_grid (tiles
+    board) (side board);*)
 
   (*draws colored grid*)
   set_color black;
