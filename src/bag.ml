@@ -36,6 +36,8 @@ let remove (bag : b) (letter : string) : b =
 
 let count (bag : b) : int = bag.count
 
+let count_letter bag letter = List.assoc letter bag.tiles
+
 let init () =
   {
     count = 98;
