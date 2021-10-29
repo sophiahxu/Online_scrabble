@@ -104,33 +104,42 @@ let board_tests =
       first_tile;
   ]
 
-(*[player_points name expected_output player] constructs an OUnit test named
-   [name] that asserts the quality of [expected_output] with the points of [player]*)
+(*[player_points name expected_output player] constructs an OUnit test
+  named [name] that asserts the quality of [expected_output] with the
+  points of [player]*)
 let player_points name expected_output player =
   name >:: fun _ ->
   assert_equal expected_output (player_points player)
     ~printer:string_of_int
 
-(*[player_names name expected_output player] constructs an OUnit test named
-   [name] that asserts the quality of [expected_output] with the name of [player]*)
-let player_names name expected_output player = 
-  name >:: fun _ -> 
-    assert_equal expected_output (player_name player)
-    ~printer:(fun x -> x)
+(*[player_names name expected_output player] constructs an OUnit test
+  named [name] that asserts the quality of [expected_output] with the
+  name of [player]*)
+let player_names name expected_output player =
+  name >:: fun _ ->
+  assert_equal expected_output (player_name player) ~printer:(fun x ->
+      x)
 
-(*[player_tiles name expected_output player] constructs an OUnit test named
-   [name] that asserts the quality of [expected_output] with the tile list of [player]*)
-let player_tiles name expected_output player = 
-  name >:: fun _ -> 
-    assert_equal expected_output (player_tiles player)
-    
+(*[player_tiles name expected_output player] constructs an OUnit test
+  named [name] that asserts the quality of [expected_output] with the
+  tile list of [player]*)
+let player_tiles name expected_output player =
+  name >:: fun _ -> assert_equal expected_output (player_tiles player)
+
 let player = init_player "Player 1"
+
 let empty_player = init_player ""
+
 let player2 = add_points player 10
-let tile1 = make_tile 'A' (50,100) 10 
-let tile2 = make_tile 'B' (100, 100) 10
+
+let tile1 = make_tile "A" (50, 100) 10
+
+let tile2 = make_tile "B" (100, 100) 10
+
 let player_w_tile1 = add_tile player tile1
+
 let player_w_2tiles = add_tile player_w_tile1 tile2
+
 let players_tests =
   [
     player_points "New player has 0 points" 0 player;
@@ -141,8 +150,9 @@ let players_tests =
     player_names "player has name Player 1" "Player 1" player;
     player_names "empty string player" "" empty_player;
     player_tiles "player has no tiles" [] player;
-    player_tiles "player with tile1" [tile1] player_w_tile1;
-    player_tiles "player w tile1 and tile2" [tile2; tile1] player_w_2tiles
+    player_tiles "player with tile1" [ tile1 ] player_w_tile1;
+    player_tiles "player w tile1 and tile2" [ tile2; tile1 ]
+      player_w_2tiles;
   ]
 
 let tests =

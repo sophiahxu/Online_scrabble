@@ -20,7 +20,10 @@ val player_points : player -> int
 val player_tiles : player -> player_tile list
 (**[player_tiles p] returns the current tiles of player [p]*)
 
-val make_tile : char -> int * int -> int -> player_tile
+val num_tiles : player -> int
+(**[num_tiles p] is the number of tiles in player [p]'s hand.*)
+
+val make_tile : string -> int * int -> int -> player_tile
 (**[make_tile l lo s] makes a tile representing letter [l], with the
    tile placed at location [lo], and a tile length of [s]*)
 
