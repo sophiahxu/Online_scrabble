@@ -71,9 +71,11 @@ let init_key () =
 let init () =
   let players = [ init_player "1" ] in
   {
-    board = board_setup 800 600;
+    board = Board.init ();
     players;
     bag = Bag.init ();
     key = init_key ();
     turn = List.hd players;
   }
+
+let init_draw t = Board.init_draw t.board

@@ -1,3 +1,5 @@
+open Graphics
+
 type bonus_type =
   | TripleWord
   | TripleLetter
@@ -10,11 +12,11 @@ type t = {
   location : int * int;
   bonus : bonus_type;
   letter : char option;
+  turn : bool;
 }
 
 type b = {
-  length : int;
-  height : int;
+  side : int;
   tiles : t list;
 }
 
@@ -32,6 +34,7 @@ let rec tile_row_setup s num x y row col =
       location = (x, y);
       bonus = NoBonus;
       letter = None;
+      turn = false;
     }
     :: tile_row_setup s (num - 1) (x + s) y row (col + 1)
 
@@ -148,16 +151,7 @@ let tile_bonus tiles =
   tiles |> List.map triple_word |> List.map triple_letter
   |> List.map double_word |> List.map double_letter
 
-let board_setup l h =
-  let start_x = l * 1 / 2 in
-  let start_y = h * 1 / 5 in
-  {
-    length = l;
-    height = h;
-    tiles = tile_bonus (tile_setup (l * 2 / 50) 15 start_x start_y 1 1);
-  }
-
-let side board = board.length * 2 / 50
+let side board = board.side
 
 let tiles board = board.tiles
 
@@ -183,3 +177,41 @@ let letter tile =
   match tile.letter with
   | Some x -> x
   | None -> ' '
+
+(**[color_grid tiles side] adds color to the rectangles as described by
+   [tiles] by using the colors and locations in this list. Each
+   rectangle that is colored has a length and width of [side]. Requires:
+   [tiles] is a valid list of tiles that can be colored. [side] > 0.*)
+let rec color_grid tiles side =
+  match tiles with
+  | [] -> ()
+  | h :: t -> (
+      match color h with
+      | Some x ->
+          set_color x;
+          fill_rect (tile_x h) (tile_y h) side side;
+          color_grid t side
+      | None -> color_grid t side)
+
+(**[grid tiles side] draws the rectangles described by [tiles] using
+   [side] as the length and width of each rectangle. Requires: [tiles]
+   is a valid list of tiles that can be drawn. [side] > 0.*)
+let rec grid tiles side =
+  match tiles with
+  | [] -> ()
+  | h :: t ->
+      draw_rect (tile_x h) (tile_y h) side side;
+      grid t side
+
+let init_draw board =
+  grid (tiles board) (side board);
+  color_grid (tiles board) (side board)
+
+let init () =
+  (*you think length is 800 and height is 600*)
+  let start_x = 400 in
+  let start_y = 120 in
+  {
+    side = 32;
+    tiles = tile_bonus (tile_setup 32 15 start_x start_y 1 1);
+  }

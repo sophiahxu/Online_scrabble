@@ -92,6 +92,9 @@ and loading_active_update st =
 
 (**[active_update st] updates the game during game state [Active].*)
 and active_update st =
+  clear_graph ();
+  let init_sta = State.init () in
+  State.init_draw init_sta;
   let sta = wait_next_event [ Key_pressed ] in
   if sta.keypressed then raise Exit
 

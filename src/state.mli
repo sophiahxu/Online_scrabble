@@ -5,6 +5,9 @@ val init : unit -> t
 (**[init ()] initializes the scrabble game state for the start of the
    game*)
 
+val init_draw : t -> unit
+(**[init_draw state] draws the initial state of the game.*)
+
 val draw_tile : t -> Players.player -> t
 (** [draw_tile state player] adds a random tile from the bag to the
     [player]'s tiles and removes that tile from bag if [player] has <= 7
