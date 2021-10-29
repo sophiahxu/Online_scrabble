@@ -74,7 +74,13 @@ let init () =
       ];
   }
 
-let clicked x y = true
+let clicked x y =
+  x > 222 && x < 348
+  && float_of_int y
+     < (((60. ** 2.) -. ((float_of_int x -. 288.) ** 2.)) ** 0.5) +. 90.
+  && float_of_int y
+     > -.(((60. ** 2.) -. ((float_of_int x -. 288.) ** 2.)) ** 0.5)
+       +. 90.
 
 let draw bag =
   set_color white;

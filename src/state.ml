@@ -85,7 +85,7 @@ let click x y state =
       {
         state with
         turn = Players.add_tile state.turn letter;
-        bag = Bag.remove letter state.bag;
+        bag = Bag.remove state.bag letter;
       }
     else state
   else state

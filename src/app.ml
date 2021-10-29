@@ -100,7 +100,7 @@ and active_update st =
     if status1.keypressed then raise Exit
     else if status1.button then (
       (* Wait for mouse to not be clicked to prevent double clicking. *)
-      let status2 = wait_next_event [ Key_pressed; Button_down ] in
+      let status2 = wait_next_event [ Button_up ] in
       (* Update state according to where mouse clicked. *)
       let state = State.click status2.mouse_x status2.mouse_y st in
       (* Draw the updated state. *)
