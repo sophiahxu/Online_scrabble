@@ -127,9 +127,7 @@ let empty_player = init_player ""
 
 let player2 = add_points player 10
 
-let tile1 = add_tile player 'A'
-
-let tile2 = add_tile player 'Z'
+(*let tile1 = add_tile player 'A' let tile2 = add_tile player 'Z'*)
 
 let players_tests =
   [
