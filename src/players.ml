@@ -89,7 +89,7 @@ let rec draw_row w h num x y =
   if num <= 0 then () else draw_rect x y w h;
   if num > 0 then draw_row w h (num - 1) (x + w) y
 
-let init_player name =
+let init name =
   {
     name;
     point_total = 0;
@@ -105,7 +105,7 @@ let init_player name =
       ];
   }
 
-let init_draw player =
+let init_draw () =
   set_color black;
   draw_row 53 53 7 456 30
 

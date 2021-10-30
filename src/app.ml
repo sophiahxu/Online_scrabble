@@ -1,5 +1,4 @@
 open Graphics
-open Game_board
 open State
 
 exception Exit
@@ -89,7 +88,7 @@ and loading_active_update () =
   clear_graph ();
   let sta = State.init () in
   State.init_draw sta;
-  update (Active (State.init ()))
+  update (Active sta)
 
 (**[active_update st] updates the game during game state [Active].*)
 and active_update st =

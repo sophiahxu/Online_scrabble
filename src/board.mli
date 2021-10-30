@@ -5,7 +5,7 @@ type t
 (**The type of a tile.*)
 
 val init : unit -> b
-(**[init x] is the board with all its values initialized.*)
+(**[init ()] is the board with all its values initialized.*)
 
 val init_draw : b -> unit
 (**[init_draw board] draws the original board [board].*)

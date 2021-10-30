@@ -203,13 +203,14 @@ let rec grid tiles side =
       draw_rect (tile_x h) (tile_y h) side side;
       grid t side
 
+(**[init_draw board] draws the initial board with the correct tile
+   colors.*)
 let init_draw board =
   color_grid (tiles board) (side board);
   set_color black;
   grid (tiles board) (side board)
 
 let init () =
-  (*you think length is 800 and height is 600*)
   let start_x = 400 in
   let start_y = 120 in
   {

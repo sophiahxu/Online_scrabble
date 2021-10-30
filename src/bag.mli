@@ -24,8 +24,8 @@ val init : unit -> b
 (** [init] is the initial scrabble bag filled with 98 tiles according to
     official scrabble rules (minus the two blank tiles). *)
 
-val init_draw : b -> unit
-(**[init bag] draws the initial bag button.*)
+val init_draw : unit -> unit
+(**[init ())] draws the initial bag button.*)
 
 val draw : b -> unit
 (** [draw bag] draws the updated "draw" button according to the new

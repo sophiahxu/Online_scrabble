@@ -80,7 +80,7 @@ let rec nth lst n =
   | _ :: b -> nth b (n - 1)
 
 let init () =
-  let players = [ init_player "1" ] in
+  let players = [ Players.init "1" ] in
   {
     board = Board.init ();
     players;
@@ -156,8 +156,8 @@ let rec player_boxes l h num =
 
 let init_draw t =
   Board.init_draw t.board;
-  Players.init_draw (nth t.players 0);
-  Bag.init_draw t.bag;
+  Players.init_draw ();
+  Bag.init_draw ();
   draw_key ();
   player_boxes 800 625 4
 
