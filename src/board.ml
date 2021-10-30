@@ -204,8 +204,9 @@ let rec grid tiles side =
       grid t side
 
 let init_draw board =
-  grid (tiles board) (side board);
-  color_grid (tiles board) (side board)
+  color_grid (tiles board) (side board);
+  set_color black;
+  grid (tiles board) (side board)
 
 let init () =
   (*you think length is 800 and height is 600*)

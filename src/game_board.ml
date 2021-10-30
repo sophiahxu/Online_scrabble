@@ -58,9 +58,8 @@ let letter_key letter number x y =
    button to click to draw letters, and two spaces for player scores to
    be displayed. If a key is pressed, the GUI closes. *)
 let make_board () =
-  let b_length = 800 in
-  (*must be a multiple of 100*)
-  let b_height = 600 in
+  (*let b_length = 800 in (*must be a multiple of 100*) let b_height =
+    600 in*)
 
   (*must be a multiple of 100*)
   (*let board = board_setup b_length b_height in
@@ -104,11 +103,8 @@ let make_board () =
   letter_key "W" "4" 50 100;
   letter_key "X" "8" 50 85;
   letter_key "Y" "4" 50 70;
-  letter_key "Z" "10" 50 55;
-
-  (*draws player score boxes*)
-  draw_circle (b_length * 18 / 50) (b_height * 3 / 20) (b_height / 10);
-  moveto (b_length * 34 / 100) (b_height * 3 / 20);
-  draw_string "DRAW";
-  moveto (b_length * 31 / 100) (b_height * 6 / 50);
-  draw_string "98 tiles left"
+  letter_key "Z" "10" 50 55
+(* (*draws player score boxes*) draw_circle (b_length * 18 / 50)
+   (b_height * 3 / 20) (b_height / 10); moveto (b_length * 34 / 100)
+   (b_height * 3 / 20); draw_string "DRAW"; moveto (b_length * 31 / 100)
+   (b_height * 6 / 50); draw_string "98 tiles left"*)
