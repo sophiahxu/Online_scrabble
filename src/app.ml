@@ -1,5 +1,5 @@
 open Graphics
-open Board
+open Game_board
 open State
 
 exception Exit
@@ -26,11 +26,11 @@ type app_state =
    remains in this state so long as the player never presses a key and
    never presses the play button.
 
-   [Loading_active]: This is the state that creates the game board and
-   shows it on the screen. The application switches to this state if the
-   state was [Initial] in the previous frame, and the player pressed the
-   play button. This state only lasts one animation frame before
-   switching to [Active].
+   [Loading_active]: This is the state that initializes the scrabble
+   game state and draws all of the initial game components to the GUI.
+   The application switches to this state if the state was [Initial] in
+   the previous frame, and the player pressed the play button. This
+   state only lasts one animation frame before switching to [Active].
 
    [Active]: This is a session of normal gameplay. Players take turns
    placing tiles on the scrabble board. The game terminates when there
@@ -43,16 +43,16 @@ type app_state =
    [Complete]: The game is over and there is winner.*)
 let rec update (st : app_state) =
   match st with
-  | Loading_initial -> loading_initial_update st
-  | Initial -> initial_update st
-  | Loading_active -> loading_active_update st
-  | Active _ -> active_update st
-  | Loading_complete -> loading_complete_update st
-  | Complete -> complete_update st
+  | Loading_initial -> loading_initial_update ()
+  | Initial -> initial_update ()
+  | Loading_active -> loading_active_update ()
+  | Active state -> active_update state
+  | Loading_complete -> loading_complete_update ()
+  | Complete -> complete_update ()
 
 (**[loading_initial_update st] updates the game during game state
    [Loading_initial].*)
-and loading_initial_update st =
+and loading_initial_update () =
   open_graph "";
   resize_window 900 625;
   set_window_title "Scrabble";
@@ -73,7 +73,7 @@ and loading_initial_update st =
   update Initial
 
 (**[initial_update st] updates the game during game state [Initial].*)
-and initial_update st =
+and initial_update () =
   let sta = wait_next_event [ Button_down; Key_pressed ] in
   if sta.keypressed then raise Exit;
   if sta.button then
@@ -81,22 +81,32 @@ and initial_update st =
       sta.mouse_x > 350 && sta.mouse_x < 550 && sta.mouse_y > 275
       && sta.mouse_y < 350
     then update Loading_active
-    else update st
+    else initial_update ()
 
 (**[loading_active_update st] updates the game during game state
    [Loading_active].*)
-and loading_active_update st =
+and loading_active_update () =
   clear_graph ();
-  Game_board.make_board ();
+  let sta = State.init () in
+  State.init_draw sta;
   update (Active (State.init ()))
 
 (**[active_update st] updates the game during game state [Active].*)
 and active_update st =
-  clear_graph ();
-  let init_sta = State.init () in
-  State.init_draw init_sta;
-  let sta = wait_next_event [ Key_pressed ] in
-  if sta.keypressed then raise Exit
+  (* Terminate the active state when the game is over. *)
+  if State.game_over st = true then update Loading_complete
+  else
+    let status1 = wait_next_event [ Key_pressed; Button_down ] in
+    (* Raise Exit when key pressed. *)
+    if status1.keypressed then raise Exit
+    else if status1.button then (
+      (* Wait for mouse to not be clicked to prevent double clicking. *)
+      let status2 = wait_next_event [ Button_up ] in
+      (* Update state according to where mouse clicked. *)
+      let state = State.click status2.mouse_x status2.mouse_y st in
+      (* Draw the updated state. *)
+      State.draw state;
+      (* Recurse on the updated state. *) active_update state)
 
 (**[loading_complete_update st] updates the game during game state
    [Loading_complete].*)

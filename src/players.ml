@@ -1,7 +1,7 @@
 open Graphics
 
 type player_tile = {
-  letter : char;
+  letter : string;
   location : int * int;
   side : int;
 }
@@ -21,6 +21,17 @@ let player_name player = player.name
 let player_points player = player.point_total
 
 let player_tiles player = player.player_tiles
+
+(**[num_tiles_helper tiles] is the number of nonempty tiles in the
+   [tiles].*)
+let rec num_tiles_helper (acc : int) (tiles : player_tile list) : int =
+  match tiles with
+  | [] -> acc
+  | h :: t ->
+      if h.letter = "" then num_tiles_helper acc t
+      else num_tiles_helper (acc + 1) t
+
+let num_tiles (p : player) = num_tiles_helper 0 p.player_tiles
 
 let make_tile letter location side = { letter; location; side }
 
@@ -42,22 +53,22 @@ let rec draw_tiles player =
       let x = x_location h in
       let y = y_location h in
       moveto x y;
-      draw_char h.letter;
+      draw_string h.letter;
       draw_tiles { player with player_tiles = t }
 
-let empty_tile1 = make_tile ' ' (456, 30) 10
+let empty_tile1 = make_tile "" (456, 30) 10
 
-let empty_tile2 = make_tile ' ' (509, 30) 10
+let empty_tile2 = make_tile "" (509, 30) 10
 
-let empty_tile3 = make_tile ' ' (562, 30) 10
+let empty_tile3 = make_tile "" (562, 30) 10
 
-let empty_tile4 = make_tile ' ' (615, 30) 10
+let empty_tile4 = make_tile "" (615, 30) 10
 
-let empty_tile5 = make_tile ' ' (668, 30) 10
+let empty_tile5 = make_tile "" (668, 30) 10
 
-let empty_tile6 = make_tile ' ' (721, 30) 10
+let empty_tile6 = make_tile "" (721, 30) 10
 
-let empty_tile7 = make_tile ' ' (774, 30) 10
+let empty_tile7 = make_tile "" (774, 30) 10
 
 (*[find_location player] returns all x locations in tile list that are
   an empty tile*)
@@ -67,7 +78,7 @@ let rec find_empty player =
   | [] -> []
   | h :: t ->
       let x = x_location h in
-      if h.letter = ' ' then
+      if h.letter = "" then
         x :: find_empty { player with player_tiles = t }
       else find_empty { player with player_tiles = t }
 
@@ -104,7 +115,7 @@ let rec change_tile player_tiles letter =
   match player_tiles with
   | [] -> []
   | h :: t ->
-      if h.letter = ' ' then { h with letter } :: t
+      if h.letter = "" then { h with letter } :: t
       else h :: change_tile t letter
 
 let add_tile player letter =
