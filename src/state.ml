@@ -2,6 +2,8 @@ open Board
 open Players
 open Bag
 
+exception NotFoundError
+
 (** Represents the score bonuses for scrabble. *)
 type bonus =
   | Letter of int
@@ -68,6 +70,14 @@ let init_key () =
       ];
   }
 
+(**[nth lst n] is the element of [lst] with index [n]. Raises:
+   NotFoundError if [n] >= List.length lst.*)
+let rec nth lst n =
+  match lst with
+  | [] -> raise NotFoundError
+  | a :: _ when n = 0 -> a
+  | _ :: b -> nth b (n - 1)
+
 let init () =
   let players = [ init_player "1" ] in
   {
@@ -78,4 +88,7 @@ let init () =
     turn = List.hd players;
   }
 
-let init_draw t = Board.init_draw t.board
+let init_draw t =
+  Board.init_draw t.board;
+  Players.init_draw (nth t.players 0);
+  Bag.init_draw t.bag

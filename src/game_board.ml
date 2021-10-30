@@ -4,25 +4,24 @@ open Board
 exception Exit
 (** Raised when the GUI should be closed. *)
 
-(**[draw_row w h num x y] draws a row of [num] rectangles of width [w]
-   and height [h]. The lower left corner of the row begins at the
-   coordinates ([x], [y]) Requires: [w], [h] > 0. [num], [x], [y] >= 0.*)
-let rec draw_row w h num x y =
-  if num <= 0 then () else draw_rect x y w h;
-  if num > 0 then draw_row w h (num - 1) (x + w) y
-(* (**[color_grid tiles side] adds color to the rectangles as described
-   by [tiles] by using the colors and locations in this list. Each
-   rectangle that is colored has a length and width of [side]. Requires:
-   [tiles] is a valid list of tiles that can be colored. [side] > 0.*)
-   let rec color_grid tiles side = match tiles with | [] -> () | h :: t
-   -> ( match color h with | Some x -> set_color x; fill_rect (tile_x h)
-   (tile_y h) side side; color_grid t side | None -> color_grid t side)
+(*(**[draw_row w h num x y] draws a row of [num] rectangles of width [w]
+  and height [h]. The lower left corner of the row begins at the
+  coordinates ([x], [y]) Requires: [w], [h] > 0. [num], [x], [y] >= 0.*)
+  let rec draw_row w h num x y = if num <= 0 then () else draw_rect x y
+  w h; if num > 0 then draw_row w h (num - 1) (x + w) y (**[color_grid
+  tiles side] adds color to the rectangles as described by [tiles] by
+  using the colors and locations in this list. Each rectangle that is
+  colored has a length and width of [side]. Requires: [tiles] is a valid
+  list of tiles that can be colored. [side] > 0.*) let rec color_grid
+  tiles side = match tiles with | [] -> () | h :: t -> ( match color h
+  with | Some x -> set_color x; fill_rect (tile_x h) (tile_y h) side
+  side; color_grid t side | None -> color_grid t side)
 
-   (**[grid tiles side] draws the rectangles described by [tiles] using
-   [side] as the length and width of each rectangle. Requires: [tiles]
-   is a valid list of tiles that can be drawn. [side] > 0.*) let rec
-   grid tiles side = match tiles with | [] -> () | h :: t -> draw_rect
-   (tile_x h) (tile_y h) side side; grid t side *)
+  (**[grid tiles side] draws the rectangles described by [tiles] using
+  [side] as the length and width of each rectangle. Requires: [tiles] is
+  a valid list of tiles that can be drawn. [side] > 0.*) let rec grid
+  tiles side = match tiles with | [] -> () | h :: t -> draw_rect (tile_x
+  h) (tile_y h) side side; grid t side *)
 
 (**[player_boxes l h num] draws [num] player boxes depending on the
    length [l] and height [h] of the entire board. Requires: [l], [h] >
@@ -67,16 +66,10 @@ let make_board () =
   (*let board = board_setup b_length b_height in
 
     (*sets up graph*) grid (tiles board) (side board); color_grid (tiles
-    board) (side board);*)
+    board) (side board);
 
-  (*draws colored grid*)
-  set_color black;
-  draw_row
-    (b_length * 1 / 15)
-    (b_length * 1 / 15)
-    7
-    (b_length * 57 / 100)
-    (b_height * 1 / 20);
+    (*draws colored grid*) set_color black; draw_row (b_length * 1 / 15)
+    (b_length * 1 / 15) 7 (b_length * 57 / 100) (b_height * 1 / 20);*)
 
   (*draws the tiles*)
   draw_rect 30 30 125 565;
@@ -112,11 +105,6 @@ let make_board () =
   letter_key "X" "8" 50 85;
   letter_key "Y" "4" 50 70;
   letter_key "Z" "10" 50 55;
-
-  (*draws key box*)
-  let num = 4 in
-  (*number of players*)
-  player_boxes b_length b_height num;
 
   (*draws player score boxes*)
   draw_circle (b_length * 18 / 50) (b_height * 3 / 20) (b_height / 10);

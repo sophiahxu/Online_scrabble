@@ -8,8 +8,8 @@ val init_player : string -> player
 (*[init_player s] initializes a player with name [s], who starts with
   zero points and seven empty tiles*)
 
-val init_draw : player -> unit 
-(**[init_draw p] draws the initial tiles for [p].*)
+val init_draw : player -> unit (**[init_draw p] draws the initial
+  tiles for [p].*) 
 val add_points : player -> int -> player
 (**[add_points p pt] adds [pt] points to player [p]*)
 

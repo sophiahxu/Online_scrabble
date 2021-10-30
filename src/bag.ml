@@ -1,3 +1,5 @@
+open Graphics
+
 type bag_tile = string * int
 (** represents a tile in the bag *)
 
@@ -71,3 +73,10 @@ let init () =
         ("Z", 1);
       ];
   }
+
+let init_draw bag =
+  draw_circle 288 90 60;
+  moveto 276 92;
+  draw_string "DRAW";
+  moveto 252 74;
+  draw_string "98 tiles left"

@@ -57,11 +57,7 @@ let letter_test name expected_output t =
   name >:: fun _ ->
   assert_equal expected_output (letter t) ~printer:Char.escaped
 
-let board = board_setup 500 300
-
-let board2 = board_setup 0 0
-
-let board3 = board_setup 942 317
+let board = Board.init ()
 
 let tile_list = tiles board
 
@@ -73,9 +69,7 @@ let last_tile = nth tile_list (List.length tile_list - 1)
 
 let board_tests =
   [
-    side_test "Normal board: 500x300 has a side of 20" 20 board;
-    side_test "Zero board: 0x0 has a side of 0" 0 board2;
-    side_test "Rounding board: 942x317 has a side of 36" 37 board3;
+    side_test "New board has side of 32" 32 board;
     name_test "First element of tile list has name 'a1'" "a1" first_tile;
     name_test "Index 45 of tile list has name 'd1'" "d1" fortyfifth_tile;
     name_test "Last element of tile list has name 'o15'" "o15" last_tile;
@@ -133,13 +127,9 @@ let empty_player = init_player ""
 
 let player2 = add_points player 10
 
-let tile1 = make_tile 'A' (50, 100) 10
+let tile1 = add_tile player 'A'
 
-let tile2 = make_tile 'B' (100, 100) 10
-
-let player_w_tile1 = add_tile player tile1
-
-let player_w_2tiles = add_tile player_w_tile1 tile2
+let tile2 = add_tile player 'Z'
 
 let players_tests =
   [
