@@ -21,20 +21,15 @@ exception Exit
   [side] as the length and width of each rectangle. Requires: [tiles] is
   a valid list of tiles that can be drawn. [side] > 0.*) let rec grid
   tiles side = match tiles with | [] -> () | h :: t -> draw_rect (tile_x
-  h) (tile_y h) side side; grid t side *)
+  h) (tile_y h) side side; grid t side
 
-(**[player_boxes l h num] draws [num] player boxes depending on the
-   length [l] and height [h] of the entire board. Requires: [l], [h] >
-   0. 2 <= [num] <= 4.*)
-let rec player_boxes l h num =
-  if num = 0 then ()
-  else
-    let x = l * 13 / 50 in
-    let y = (h * 1 / 6 * (4 - num)) + (h * 3 / 10) in
-    draw_rect x y (l * 1 / 5) (h * 3 / 20);
-    moveto (x + (l / 50)) (y + (h * 3 / 25));
-    draw_string ("Player " ^ string_of_int num);
-    if num > 0 then player_boxes l h (num - 1)
+  (**[player_boxes l h num] draws [num] player boxes depending on the
+  length [l] and height [h] of the entire board. Requires: [l], [h] > 0.
+  2 <= [num] <= 4.*) let rec player_boxes l h num = if num = 0 then ()
+  else let x = l * 13 / 50 in let y = (h * 1 / 6 * (4 - num)) + (h * 3 /
+  10) in draw_rect x y (l * 1 / 5) (h * 3 / 20); moveto (x + (l / 50))
+  (y + (h * 3 / 25)); draw_string ("Player " ^ string_of_int num); if
+  num > 0 then player_boxes l h (num - 1) *)
 
 (*[color_key color phrase x y w h] draws a rectangle with lower left
   corner at ([x],[y]) with width [w] and height [h] and colors it with
@@ -76,7 +71,7 @@ let make_board () =
   draw_string "Key";
   color_key 0xFF0000 " -3x Word" 50 540 25 25;
   color_key 0x0000FF " -3x Letter" 50 510 25 25;
-  color_key 0xE88282 " -2x Word" 50 480 25 25;
+  color_key 0xE88282 "\n  -2x Word" 50 480 25 25;
   color_key 0x8282E8 " -2x Letter" 50 450 25 25;
   letter_key "A" "1" 50 430;
   letter_key "B" "3" 50 415;
