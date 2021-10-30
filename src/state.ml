@@ -77,3 +77,21 @@ let init () =
     key = init_key ();
     turn = List.hd players;
   }
+
+let click x y state =
+  if Bag.clicked x y then
+    if Players.num_tiles state.turn < 7 then
+      let letter = Bag.find_letter state.bag in
+      {
+        state with
+        turn = Players.add_tile state.turn letter;
+        bag = Bag.remove state.bag letter;
+      }
+    else state
+  else state
+
+let game_over state = false
+
+let draw (state : t) =
+  Players.draw_tiles state.turn;
+  Bag.draw state.bag

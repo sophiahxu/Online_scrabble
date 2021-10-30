@@ -16,6 +16,14 @@ val count_letter : b -> string -> int
 (** [count_letter bag letter] is the number of tiles in [bag] that are
     [letter]. Requires: [letter] is a capital letter. *)
 
+val clicked : int -> int -> bool
+(** [clicked x y] is true if the the coordinates [x],[y] are in the
+    "draw" button. *)
+
 val init : unit -> b
 (** [init] is the initial scrabble bag filled with 98 tiles according to
     official scrabble rules (minus the two blank tiles). *)
+
+val draw : b -> unit
+(** [draw bag] draws the updated "draw" button according to the new
+    [bag]. *)

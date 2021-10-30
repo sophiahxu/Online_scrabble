@@ -1,3 +1,5 @@
+open Graphics
+
 type bag_tile = string * int
 (** represents a tile in the bag *)
 
@@ -71,3 +73,21 @@ let init () =
         ("Z", 1);
       ];
   }
+
+let clicked x y =
+  x > 222 && x < 348
+  && float_of_int y
+     < (((60. ** 2.) -. ((float_of_int x -. 288.) ** 2.)) ** 0.5) +. 90.
+  && float_of_int y
+     > -.(((60. ** 2.) -. ((float_of_int x -. 288.) ** 2.)) ** 0.5)
+       +. 90.
+
+let draw bag =
+  set_color white;
+  fill_circle 288 90 60;
+  set_color black;
+  draw_circle 288 90 60;
+  moveto 272 90;
+  draw_string "DRAW";
+  moveto 248 72;
+  draw_string (string_of_int bag.count ^ " tiles left")

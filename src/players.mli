@@ -20,7 +20,10 @@ val player_points : player -> int
 val player_tiles : player -> player_tile list
 (**[player_tiles p] returns the current tiles of player [p]*)
 
-val add_tile : player -> char -> player
+val num_tiles : player -> int
+(**[num_tiles p] is the number of tiles in player [p]'s hand.*)
+
+val add_tile : player -> string -> player
 (**[add_tile p pt] adds tile [pt] to player [p]'s current tiles.
    Requires: player [p] currently has not more than 7 tiles*)
 
