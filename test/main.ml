@@ -115,34 +115,44 @@ let player_names name expected_output player =
   assert_equal expected_output (player_name player) ~printer:(fun x ->
       x)
 
-(*(*[player_tiles name expected_output player] constructs an OUnit test
+(*[num_tiles name expected_output player] constructs an OUnit test
   named [name] that asserts the quality of [expected_output] with the
-  tile list of [player]*) let player_tiles name expected_output player =
-  name >:: fun _ -> assert_equal expected_output (player_tiles player)
+  number of tiles of [player]*)
+  let num_tiles name expected_output player =
+    name >:: fun _ ->
+    assert_equal expected_output (num_tiles player) ~printer:string_of_int
 
-  let player = init_player "Player 1"
-
-  let empty_player = init_player ""
-
+  let player = Players.init "Player 1"
+  let empty_player = Players.init ""
   let player2 = add_points player 10
+  let player1t = add_tile player2 "A"
+  let player2t = add_tile player1t "B"
+  let player3t = add_tile player2t "C"
+  let player4t = add_tile player3t "D"
+  let player5t = add_tile player4t "E"
+  let player6t = add_tile player5t "F"
+  let player7t = add_tile player6t "G"
+  let player8t = add_tile player7t "H"
+  let player_removet = remove_tile player7t 456
 
-  let tile1 = make_tile "A" (50, 100) 10
-
-  let tile2 = make_tile "B" (100, 100) 10
-
-  let player_w_tile1 = add_tile player tile1
-
-  let player_w_2tiles = add_tile player_w_tile1 tile2
-
-  let players_tests = [ player_points "New player has 0 points" 0
-  player; ( "New player has name 'Player 1'" >:: fun _ -> assert_equal
-  "Player 1" (player_name player) ~printer:id ); player_points "New
-  player with 10 points added has 10 points" 10 player2; player_names
-  "player has name Player 1" "Player 1" player; player_names "empty
-  string player" "" empty_player; player_tiles "player has no tiles" []
-  player; player_tiles "player with tile1" [ tile1 ] player_w_tile1;
-  player_tiles "player w tile1 and tile2" [ tile2; tile1 ]
-  player_w_2tiles; ]*)
+  let players_tests = [ 
+    player_points "New player has 0 points" 0 player; 
+    ( "New player has name 'Player 1'" >:: fun _ -> assert_equal
+  "Player 1" (player_name player) ~printer:id ); 
+  player_points "New player with 10 points added has 10 points" 10 player2; 
+  player_names "player has name Player 1" "Player 1" player; 
+  player_names "empty string player" "" empty_player;
+  num_tiles "player with no tiles" 0 player;
+  num_tiles "player with 1 tile" 1 player1t;
+  num_tiles "player with 2 tiles" 2 player2t;
+  num_tiles "player with 3 tiles" 3 player3t;
+  num_tiles "player with 4 tiles" 4 player4t;
+  num_tiles "player with 5 tiles" 5 player5t;
+  num_tiles "player with 6 tiles" 6 player6t;
+  num_tiles "player with 7 tiles" 7 player7t;
+  num_tiles "adding a tile onto 7 occupied tiles" 7 player8t;
+  num_tiles "removing a tile" 6 player_removet 
+  ]
 
 (**[count_test name expected_output b] constructs an OUnit test named
    [name] that asserts the quality of [expected_output] with count [b]*)

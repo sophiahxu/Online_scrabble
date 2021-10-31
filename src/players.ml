@@ -6,21 +6,19 @@ type player_tile = {
   side : int;
 }
 
-type player = {
+type t = {
   name : string;
   point_total : int;
   player_tiles : player_tile list;
 }
 
-let add_points player points =
-  let original = player.point_total in
-  { player with point_total = original + points }
+let add_points (p : t)  points =
+  let original = p.point_total in
+  { p with point_total = original + points }
 
-let player_name player = player.name
+let player_name (p : t) = p.name
 
-let player_points player = player.point_total
-
-let player_tiles player = player.player_tiles
+let player_points (p : t) = p.point_total
 
 (**[num_tiles_helper tiles] is the number of nonempty tiles in the
    [tiles].*)
@@ -31,7 +29,7 @@ let rec num_tiles_helper (acc : int) (tiles : player_tile list) : int =
       if h.letter = "" then num_tiles_helper acc t
       else num_tiles_helper (acc + 1) t
 
-let num_tiles (p : player) = num_tiles_helper 0 p.player_tiles
+let num_tiles (p : t) = num_tiles_helper 0 p.player_tiles
 
 let make_tile letter location side = { letter; location; side }
 
@@ -45,8 +43,8 @@ let y_location tile =
   match tile.location with
   | _, y -> y
 
-let rec draw_tiles player =
-  let current_tiles = player_tiles player in
+let rec draw_tiles p =
+  let current_tiles = p.player_tiles in
   match current_tiles with
   | [] -> draw_string ""
   | h :: t ->
@@ -54,7 +52,7 @@ let rec draw_tiles player =
       let y = y_location h in
       moveto x y;
       draw_string h.letter;
-      draw_tiles { player with player_tiles = t }
+      draw_tiles { p with player_tiles = t }
 
 let empty_tile1 = make_tile "" (456, 30) 10
 
@@ -69,18 +67,6 @@ let empty_tile5 = make_tile "" (668, 30) 10
 let empty_tile6 = make_tile "" (721, 30) 10
 
 let empty_tile7 = make_tile "" (774, 30) 10
-
-(*[find_location player] returns all x locations in tile list that are
-  an empty tile*)
-let rec find_empty player =
-  let current_tiles = player_tiles player in
-  match current_tiles with
-  | [] -> []
-  | h :: t ->
-      let x = x_location h in
-      if h.letter = "" then
-        x :: find_empty { player with player_tiles = t }
-      else find_empty { player with player_tiles = t }
 
 (**[draw_row w h num x y] draws a row of [num] rectangles of width [w]
    and height [h]. The lower left corner of the row begins at the
@@ -109,7 +95,7 @@ let init_draw () =
   set_color black;
   draw_row 53 53 7 456 30
 
-(*[add_tile_list player_tiles letter] replaces an empty tile in
+(**[add_tile_list player_tiles letter] replaces an empty tile in
   [player_tiles] with a new tile with [letter]*)
 let rec change_tile player_tiles letter =
   match player_tiles with
@@ -118,6 +104,37 @@ let rec change_tile player_tiles letter =
       if h.letter = "" then { h with letter } :: t
       else h :: change_tile t letter
 
-let add_tile player letter =
-  let current_tiles = player_tiles player in
-  { player with player_tiles = change_tile current_tiles letter }
+let add_tile (p : t) letter =
+  let current_tiles = p.player_tiles in
+  { p with player_tiles = change_tile current_tiles letter }
+
+(**[remove_tile_helper player_tiles location] removes the the tile at 
+[location] within player_tiles*)
+let rec remove_tile_helper player_tiles location = 
+  match player_tiles with 
+  | [] -> []
+  | h :: t -> let x = x_location h in 
+    if x = location then {h with letter = ""} :: t 
+    else h :: remove_tile_helper t location
+
+let remove_tile (p : t) location = let current_tiles = p.player_tiles in 
+{p with player_tiles = remove_tile_helper current_tiles location}
+
+(**[lower_left st] returns the lower left corner of the rectangle surrounding 
+the current point [st]*)
+let lower_left st = 
+  let x = st.mouse_x in 
+  if x > 456 && x < 509 then 456 
+  else if x > 509 && x < 562 then 509
+  else if x > 562 && x < 615 then 562
+  else if x > 615 && x < 668 then 615
+  else if x > 668 && x < 721 then 668
+  else if x > 721 && x < 774 then 721
+  else if x > 774 && x < 827 then 774
+  else 0
+
+let erase st = 
+ set_color white;
+ if st.button then 
+ if st.mouse_y > 30 && st.mouse_y < 73 then let x = lower_left st in
+  fill_rect x 30 53 53

@@ -23,12 +23,12 @@ type t = {
   (* scrabble board *)
   bag : Bag.b;
   (* bag of unused tiles *)
-  players : Players.player list;
+  players : Players.t list;
   (* list of players *)
-  turn : player; (* player whose turn it is currently *)
+  turn : Players.t; (* player whose turn it is currently *)
 }
 
-let draw_tile (state : t) (p : player) : t = state
+let draw_tile (state : t) (p : Players.t) : t = state
 
 (** [init_key () is the scrabble scoring key] *)
 let init_key () =
