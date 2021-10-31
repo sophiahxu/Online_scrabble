@@ -50,7 +50,7 @@ let rec draw_tiles p =
   | h :: t ->
       let x = x_location h in
       let y = y_location h in
-      moveto x y;
+      moveto (x + 23) (y + 23);
       draw_string h.letter;
       draw_tiles { p with player_tiles = t }
 
