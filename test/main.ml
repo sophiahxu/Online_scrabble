@@ -134,6 +134,12 @@ let player_names name expected_output player =
   let player7t = add_tile player6t "G"
   let player8t = add_tile player7t "H"
   let player_removet = remove_tile player7t 456
+  let player_remove2t = remove_tile player_removet 509
+  let player_remove3t = remove_tile player_remove2t 562
+  let player_remove4t = remove_tile player_remove3t 615
+  let player_remove5t = remove_tile player_remove4t 668
+  let player_remove6t = remove_tile player_remove5t 721
+  let player_remove7t = remove_tile player_remove6t 774
 
   let players_tests = [ 
     player_points "New player has 0 points" 0 player; 
@@ -151,7 +157,13 @@ let player_names name expected_output player =
   num_tiles "player with 6 tiles" 6 player6t;
   num_tiles "player with 7 tiles" 7 player7t;
   num_tiles "adding a tile onto 7 occupied tiles" 7 player8t;
-  num_tiles "removing a tile" 6 player_removet 
+  num_tiles "removing a tile" 6 player_removet;
+  num_tiles "removing 2 tiles" 5 player_remove2t;
+  num_tiles "removing 3 tiles" 4 player_remove3t;
+  num_tiles "removing 4 tiles" 3 player_remove4t;
+  num_tiles "removing 5 tiles" 2 player_remove5t;
+  num_tiles "removing 6 tiles" 1 player_remove6t;
+  num_tiles "removing 7 tiles" 0 player_remove7t;
   ]
 
 (**[count_test name expected_output b] constructs an OUnit test named
