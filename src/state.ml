@@ -71,14 +71,6 @@ let init_key () =
       ];
   }
 
-(**[nth lst n] is the element of [lst] with index [n]. Raises:
-   NotFoundError if [n] >= List.length lst.*)
-let rec nth lst n =
-  match lst with
-  | [] -> raise NotFoundError
-  | a :: _ when n = 0 -> a
-  | _ :: b -> nth b (n - 1)
-
 let init () =
   let players = [ Players.init "1" ] in
   {
@@ -89,9 +81,9 @@ let init () =
     turn = List.hd players;
   }
 
-(*[color_key color phrase x y w h] draws a rectangle with lower left
-  corner at ([x],[y]) with width [w] and height [h] and colors it with
-  [color]. [phrase] is displayed to the right of the rectangle*)
+(**[color_key color phrase x y w h] draws a rectangle with lower left
+   corner at ([x],[y]) with width [w] and height [h] and colors it with
+   [color]. [phrase] is displayed to the right of the rectangle*)
 let color_key color phrase x y w h =
   set_color color;
   draw_rect x y w h;
@@ -100,8 +92,8 @@ let color_key color phrase x y w h =
   set_color black;
   draw_string phrase
 
-(*[letter_key letter number] prints a string with lower left corner at
-  ([x],[y]) that associates [letter] with [number]*)
+(**[letter_key letter number] prints a string with lower left corner at
+   ([x],[y]) that associates [letter] with [number]*)
 let letter_key letter number x y =
   moveto x y;
   draw_string (Printf.sprintf "%s - %s" letter number)
