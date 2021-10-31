@@ -54,8 +54,13 @@ let color_test name expected_output t =
 (**[letter_test name expected_output t] constructs an OUnit test named
    [name] that asserts the quality of [expected_output] with letter [t]*)
 let letter_test name expected_output t =
+  name >:: fun _ -> assert_equal expected_output (letter t) ~printer:id
+
+let clicked_test name expected_output x y board =
   name >:: fun _ ->
-  assert_equal expected_output (letter t) ~printer:Char.escaped
+  assert_equal expected_output
+    (Board.clicked x y board)
+    ~printer:string_of_bool
 
 let board = Board.init ()
 
@@ -66,6 +71,8 @@ let first_tile = nth tile_list 0
 let fortyfifth_tile = nth tile_list 45
 
 let last_tile = nth tile_list (List.length tile_list - 1)
+
+let board2 = Board.add_tile 400 400 "A" board
 
 let board_tests =
   [
@@ -95,14 +102,19 @@ let board_tests =
       (Some 0x0000FF) (nth tile_list 20);
     color_test "Index 2 of tile list has color None" None
       (nth tile_list 2);
-    letter_test "First element of tile list has letter ' '" ' '
+    letter_test "First element of tile list has letter empty string" ""
       first_tile;
+    clicked_test "0, 0 is not on the board" false 0 0 board;
+    clicked_test "600, 400 is on the board" true 600 400 board;
+    clicked_test
+      "400, 400 is not on the board after a tile has been added \n\
+      \    there" false 400 400 board2;
   ]
 
 (*[player_points name expected_output player] constructs an OUnit test
   named [name] that asserts the quality of [expected_output] with the
   points of [player]*)
-let player_points name expected_output player =
+let player_points_test name expected_output player =
   name >:: fun _ ->
   assert_equal expected_output (player_points player)
     ~printer:string_of_int
@@ -110,7 +122,7 @@ let player_points name expected_output player =
 (*[player_names name expected_output player] constructs an OUnit test
   named [name] that asserts the quality of [expected_output] with the
   name of [player]*)
-let player_names name expected_output player =
+let player_names_test name expected_output player =
   name >:: fun _ ->
   assert_equal expected_output (player_name player) ~printer:(fun x ->
       x)
@@ -118,7 +130,7 @@ let player_names name expected_output player =
 (*[num_tiles name expected_output player] constructs an OUnit test named
   [name] that asserts the quality of [expected_output] with the number
   of tiles of [player]*)
-let num_tiles name expected_output player =
+let num_tiles_test name expected_output player =
   name >:: fun _ ->
   assert_equal expected_output (num_tiles player) ~printer:string_of_int
 
@@ -160,29 +172,29 @@ let player_remove7t = remove_tile player_remove6t 774
 
 let players_tests =
   [
-    player_points "New player has 0 points" 0 player;
+    player_points_test "New player has 0 points" 0 player;
     ( "New player has name 'Player 1'" >:: fun _ ->
       assert_equal "Player 1" (player_name player) ~printer:id );
-    player_points "New player with 10 points added has 10 points" 10
-      player2;
-    player_names "player has name Player 1" "Player 1" player;
-    player_names "empty string player" "" empty_player;
-    num_tiles "player with no tiles" 0 player;
-    num_tiles "player with 1 tile" 1 player1t;
-    num_tiles "player with 2 tiles" 2 player2t;
-    num_tiles "player with 3 tiles" 3 player3t;
-    num_tiles "player with 4 tiles" 4 player4t;
-    num_tiles "player with 5 tiles" 5 player5t;
-    num_tiles "player with 6 tiles" 6 player6t;
-    num_tiles "player with 7 tiles" 7 player7t;
-    num_tiles "adding a tile onto 7 occupied tiles" 7 player8t;
-    num_tiles "removing a tile" 6 player_removet;
-    num_tiles "removing 2 tiles" 5 player_remove2t;
-    num_tiles "removing 3 tiles" 4 player_remove3t;
-    num_tiles "removing 4 tiles" 3 player_remove4t;
-    num_tiles "removing 5 tiles" 2 player_remove5t;
-    num_tiles "removing 6 tiles" 1 player_remove6t;
-    num_tiles "removing 7 tiles" 0 player_remove7t;
+    player_points_test "New player with 10 points added has 10 points"
+      10 player2;
+    player_names_test "Player has name Player 1" "Player 1" player;
+    player_names_test "Empty string player" "" empty_player;
+    num_tiles_test "Player with no tiles" 0 player;
+    num_tiles_test "Player with 1 tile" 1 player1t;
+    num_tiles_test "Player with 2 tiles" 2 player2t;
+    num_tiles_test "Player with 3 tiles" 3 player3t;
+    num_tiles_test "Player with 4 tiles" 4 player4t;
+    num_tiles_test "Player with 5 tiles" 5 player5t;
+    num_tiles_test "Player with 6 tiles" 6 player6t;
+    num_tiles_test "Player with 7 tiles" 7 player7t;
+    num_tiles_test "Adding a tile onto 7 occupied tiles" 7 player8t;
+    num_tiles_test "Removing a tile" 6 player_removet;
+    num_tiles_test "Removing 2 tiles" 5 player_remove2t;
+    num_tiles_test "Removing 3 tiles" 4 player_remove3t;
+    num_tiles_test "Removing 4 tiles" 3 player_remove4t;
+    num_tiles_test "Removing 5 tiles" 2 player_remove5t;
+    num_tiles_test "Removing 6 tiles" 1 player_remove6t;
+    num_tiles_test "Removing 7 tiles" 0 player_remove7t;
   ]
 
 (**[count_test name expected_output b] constructs an OUnit test named

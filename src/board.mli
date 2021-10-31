@@ -7,7 +7,7 @@ type t
 val init : unit -> b
 (**[init ()] is the board with all its values initialized.*)
 
-val init_draw : b -> unit
+val draw : b -> unit
 (**[init_draw board] draws the original board [board].*)
 
 val side : b -> int
@@ -28,5 +28,14 @@ val tile_y : t -> int
 val color : t -> int option
 (**[color a] is the color of the tile [a]*)
 
-val letter : t -> char
+val letter : t -> string
 (**[letter a] is the letter on tile [a].*)
+
+val clicked : int -> int -> b -> bool
+(**[clicked x y] is whether or not the dimension *)
+
+val add_tile : int -> int -> string -> b -> b
+(**[add_tile x y b l] is the new board after replacing the tile at x, y
+   with one that has the letter [l]. Requires: x, y are coordinates of a
+   valid tile to replace (i.e. one that does not already have a letter
+   on it and is on the board)*)

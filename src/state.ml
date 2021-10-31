@@ -147,7 +147,7 @@ let rec player_boxes l h num =
     if num > 0 then player_boxes l h (num - 1)
 
 let init_draw t =
-  Board.init_draw t.board;
+  Board.draw t.board;
   Player.init_draw ();
   Bag.init_draw ();
   draw_key ();
