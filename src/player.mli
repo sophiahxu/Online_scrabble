@@ -26,7 +26,7 @@ val add_tile : t -> string -> t
 (**[add_tile p s] adds tile with letter [s] to player [p]'s next
    available tile location*)
 
-val draw_tiles : t -> unit
+val draw : t -> unit
 (**[draw_tiles p] draws the tiles of [p] at each tiles specified
    location*)
 

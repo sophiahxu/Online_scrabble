@@ -1,7 +1,7 @@
 open OUnit2
 open Game
 open Board
-open Players
+open Player
 open Bag
 
 let id x = x
@@ -122,9 +122,9 @@ let num_tiles name expected_output player =
   name >:: fun _ ->
   assert_equal expected_output (num_tiles player) ~printer:string_of_int
 
-let player = Players.init "Player 1"
+let player = Player.init "Player 1"
 
-let empty_player = Players.init ""
+let empty_player = Player.init ""
 
 let player2 = add_points player 10
 
@@ -200,6 +200,6 @@ let bag_tests =
 
 let tests =
   "test suite for scrabble game"
-  >::: List.flatten [ board_tests (*players_tests*) ]
+  >::: List.flatten [ board_tests; players_tests; bag_tests ]
 
 let _ = run_test_tt_main tests

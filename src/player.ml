@@ -12,7 +12,7 @@ type t = {
   player_tiles : player_tile list;
 }
 
-let add_points (p : t)  points =
+let add_points (p : t) points =
   let original = p.point_total in
   { p with point_total = original + points }
 
@@ -43,7 +43,7 @@ let y_location tile =
   match tile.location with
   | _, y -> y
 
-let rec draw_tiles p =
+let rec draw p =
   let current_tiles = p.player_tiles in
   match current_tiles with
   | [] -> draw_string ""
@@ -52,7 +52,7 @@ let rec draw_tiles p =
       let y = y_location h in
       moveto (x + 23) (y + 23);
       draw_string h.letter;
-      draw_tiles { p with player_tiles = t }
+      draw { p with player_tiles = t }
 
 let empty_tile1 = make_tile "" (456, 30) 10
 
@@ -96,7 +96,7 @@ let init_draw () =
   draw_row 53 53 7 456 30
 
 (**[add_tile_list player_tiles letter] replaces an empty tile in
-  [player_tiles] with a new tile with [letter]*)
+   [player_tiles] with a new tile with [letter]*)
 let rec change_tile player_tiles letter =
   match player_tiles with
   | [] -> []
@@ -108,23 +108,25 @@ let add_tile (p : t) letter =
   let current_tiles = p.player_tiles in
   { p with player_tiles = change_tile current_tiles letter }
 
-(**[remove_tile_helper player_tiles location] removes the the tile at 
-[location] within player_tiles*)
-let rec remove_tile_helper player_tiles location = 
-  match player_tiles with 
+(**[remove_tile_helper player_tiles location] removes the the tile at
+   [location] within player_tiles*)
+let rec remove_tile_helper player_tiles location =
+  match player_tiles with
   | [] -> []
-  | h :: t -> let x = x_location h in 
-    if x = location then {h with letter = ""} :: t 
-    else h :: remove_tile_helper t location
+  | h :: t ->
+      let x = x_location h in
+      if x = location then { h with letter = "" } :: t
+      else h :: remove_tile_helper t location
 
-let remove_tile (p : t) location = let current_tiles = p.player_tiles in 
-{p with player_tiles = remove_tile_helper current_tiles location}
+let remove_tile (p : t) location =
+  let current_tiles = p.player_tiles in
+  { p with player_tiles = remove_tile_helper current_tiles location }
 
-(**[lower_left st] returns the lower left corner of the rectangle surrounding 
-the current point [st]*)
-let lower_left st = 
-  let x = st.mouse_x in 
-  if x > 456 && x < 509 then 456 
+(**[lower_left st] returns the lower left corner of the rectangle
+   surrounding the current point [st]*)
+let lower_left st =
+  let x = st.mouse_x in
+  if x > 456 && x < 509 then 456
   else if x > 509 && x < 562 then 509
   else if x > 562 && x < 615 then 562
   else if x > 615 && x < 668 then 615
@@ -133,8 +135,9 @@ let lower_left st =
   else if x > 774 && x < 827 then 774
   else 0
 
-let erase st = 
- set_color white;
- if st.button then 
- if st.mouse_y > 30 && st.mouse_y < 73 then let x = lower_left st in
-  fill_rect x 30 53 53
+let erase st =
+  set_color white;
+  if st.button then
+    if st.mouse_y > 30 && st.mouse_y < 73 then
+      let x = lower_left st in
+      fill_rect x 30 53 53

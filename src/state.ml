@@ -1,5 +1,5 @@
 open Board
-open Players
+open Player
 open Bag
 open Graphics
 
@@ -23,12 +23,12 @@ type t = {
   (* scrabble board *)
   bag : Bag.b;
   (* bag of unused tiles *)
-  players : Players.t list;
+  players : Player.t list;
   (* list of players *)
-  turn : Players.t; (* player whose turn it is currently *)
+  turn : Player.t; (* player whose turn it is currently *)
 }
 
-let draw_tile (state : t) (p : Players.t) : t = state
+let draw_tile (state : t) (p : Player.t) : t = state
 
 (** [init_key () is the scrabble scoring key] *)
 let init_key () =
@@ -72,7 +72,7 @@ let init_key () =
   }
 
 let init () =
-  let players = [ Players.init "1" ] in
+  let players = [ Player.init "1" ] in
   {
     board = Board.init ();
     players;
@@ -148,18 +148,18 @@ let rec player_boxes l h num =
 
 let init_draw t =
   Board.init_draw t.board;
-  Players.init_draw ();
+  Player.init_draw ();
   Bag.init_draw ();
   draw_key ();
   player_boxes 800 625 4
 
 let click x y state =
   if Bag.clicked x y then
-    if Players.num_tiles state.turn < 7 then
+    if Player.num_tiles state.turn < 7 then
       let letter = Bag.find_letter state.bag in
       {
         state with
-        turn = Players.add_tile state.turn letter;
+        turn = Player.add_tile state.turn letter;
         bag = Bag.remove state.bag letter;
       }
     else state
@@ -168,5 +168,5 @@ let click x y state =
 let game_over state = false
 
 let draw (state : t) =
-  Players.draw_tiles state.turn;
+  Player.draw state.turn;
   Bag.draw state.bag
