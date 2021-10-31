@@ -73,17 +73,17 @@ let board_tests =
     name_test "First element of tile list has name 'a1'" "a1" first_tile;
     name_test "Index 45 of tile list has name 'd1'" "d1" fortyfifth_tile;
     name_test "Last element of tile list has name 'o15'" "o15" last_tile;
-    tile_x_test "First element of tile list has x value 250" 250
+    tile_x_test "First element of tile list has x value 400" 400
       first_tile;
-    tile_x_test "Index 45 of tile list has x value 250" 250
+    tile_x_test "Index 45 of tile list has x value 400" 400
       fortyfifth_tile;
-    tile_x_test "Last element of tile list has x value 530" 530
+    tile_x_test "Last element of tile list has x value 848" 848
       last_tile;
-    tile_y_test "First element of tile list has y value 60" 60
+    tile_y_test "First element of tile list has y value 120" 120
       first_tile;
-    tile_y_test "Index 45 of tile list has y value 100" 120
+    tile_y_test "Index 45 of tile list has y value 216" 216
       fortyfifth_tile;
-    tile_y_test "Last element of tile list has y value 530" 340
+    tile_y_test "Last element of tile list has y value 568" 568
       last_tile;
     color_test "First element of tile list has color 0xFF0000"
       (Some 0xFF0000) first_tile;
