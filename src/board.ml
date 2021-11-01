@@ -186,6 +186,8 @@ let letter tile =
   | Some x -> x
   | None -> ""
 
+let turn tile = tile.turn
+
 (**[color_grid tiles side] adds color to the rectangles as described by
    [tiles] by using the colors and locations in this list. Each
    rectangle that is colored has a length and width of [side]. Requires:
