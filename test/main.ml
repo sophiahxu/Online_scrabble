@@ -54,7 +54,7 @@ let color_test name expected_output t =
 (**[letter_test name expected_output t] constructs an OUnit test named
    [name] that asserts the quality of [expected_output] with letter [t]*)
 let letter_test name expected_output t =
-  name >:: fun _ -> assert_equal expected_output (letter t) ~printer:id
+  name >:: fun _ -> assert_equal expected_output (Board.letter t) ~printer:id
 
 let clicked_test name expected_output x y board =
   name >:: fun _ ->
@@ -171,19 +171,19 @@ let player7t = add_tile player6t "G"
 
 let player8t = add_tile player7t "H"
 
-let player_removet = remove_tile player7t 456
+let player_removet = remove_tile player7t 457
 
-let player_remove2t = remove_tile player_removet 509
+let player_remove2t = remove_tile player_removet 510
 
-let player_remove3t = remove_tile player_remove2t 562
+let player_remove3t = remove_tile player_remove2t 563
 
-let player_remove4t = remove_tile player_remove3t 615
+let player_remove4t = remove_tile player_remove3t 616
 
-let player_remove5t = remove_tile player_remove4t 668
+let player_remove5t = remove_tile player_remove4t 669
 
-let player_remove6t = remove_tile player_remove5t 721
+let player_remove6t = remove_tile player_remove5t 722
 
-let player_remove7t = remove_tile player_remove6t 774
+let player_remove7t = remove_tile player_remove6t 775
 
 let players_tests =
   [
@@ -213,6 +213,17 @@ let players_tests =
     pclicked_test "Player1t has non-empty tile at 456" true player1t 480
       35;
     pclicked_test "Player1t has empty tile at 509" false player1t 555 40;
+    pclicked_test "Player1t has empty tile at 562" false player1t 563 42;
+    pclicked_test "Player1t has empty tile at 615" false player1t 632 51;
+    pclicked_test "Player1t has empty tile at 668" false player1t 669 42;
+    pclicked_test "Player1t has empty tile at 721" false player1t 736 33;
+    pclicked_test "Player1t has empty tile at 774" false player1t 783 44;
+    pclicked_test "Player7t has non-empty at 509" true player7t 510 60;
+    pclicked_test "Player7t has non-empty at 562" true player7t 567 60;
+    pclicked_test "Player7t has non-empty at 615" true player7t 621 60;
+    pclicked_test "Player7t has non-empty at 668" true player7t 671 60;
+    pclicked_test "Player7t has non-empty at 721" true player7t 735 60;
+    pclicked_test "Player7t has non-empty at 774" true player7t 783 60;
     pclicked_test "Player7t has non-empty tile at 774" true player7t 780
       43;
   ]
