@@ -3,21 +3,25 @@ open Player
 open Bag
 open Graphics
 
-exception NotFoundError
-
-(** Represents the score bonuses for scrabble. *)
 type bonus =
   | Letter of int
-  | Word of int
+  | Word of int  (** Represents the score bonuses for scrabble. *)
 
-type k = {
+type key = {
   color : (int * bonus) list;
   letter : (string * int) list;
 }
 (** Represents the scoring key for scrabble. *)
 
+type event =
+  | Play
+  | Tile_clicked of int
+      (** Represents a description of the current state of the game. *)
+
 type t = {
-  key : k;
+  event : event;
+  (* description of the current state of the game. *)
+  key : key;
   (* scrabble scoring key *)
   board : Board.b;
   (* scrabble board *)
@@ -74,6 +78,7 @@ let init_key () =
 let init () =
   let players = [ Player.init "1" ] in
   {
+    event = Play;
     board = Board.init ();
     players;
     bag = Bag.init ();
@@ -154,19 +159,37 @@ let init_draw t =
   player_boxes 800 625 4
 
 let click x y state =
-  if Bag.clicked x y then
-    if Player.num_tiles state.turn < 7 then
-      let letter = Bag.find_letter state.bag in
-      {
-        state with
-        turn = Player.add_tile state.turn letter;
-        bag = Bag.remove state.bag letter;
-      }
-    else state
-  else state
+  match state.event with
+  | Play ->
+      if Bag.clicked x y then
+        if Player.num_tiles state.turn < 7 then
+          let letter = Bag.find_letter state.bag in
+          {
+            state with
+            turn = Player.add_tile state.turn letter;
+            bag = Bag.remove state.bag letter;
+          }
+        else state
+      else if Player.clicked state.turn x y then
+        { state with event = Tile_clicked x }
+      else state
+  | Tile_clicked x0 ->
+      if Board.clicked x y state.board then
+        {
+          state with
+          event = Play;
+          turn = Player.remove_tile state.turn x0;
+          board = Board.add_tile x y "A" state.board;
+        }
+      else { state with event = Play }
 
 let game_over state = false
 
-let draw (state : t) =
+let draw (state : t) : unit =
   Player.draw state.turn;
-  Bag.draw state.bag
+  Bag.draw state.bag;
+  Board.draw state.board;
+  moveto 0 0;
+  match state.event with
+  | Play -> ()
+  | Tile_clicked x0 -> draw_string (string_of_int x0)

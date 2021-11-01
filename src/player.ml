@@ -113,17 +113,19 @@ let add_tile (p : t) letter =
 let rec remove_tile_helper player_tiles location =
   match player_tiles with
   | [] -> []
-  | h :: t -> let x = x_location h in 
-    if x = location then {h with letter = ""} :: t 
-    else h :: remove_tile_helper t location
+  | h :: t ->
+      let x = x_location h in
+      if x = location then { h with letter = "" } :: t
+      else h :: remove_tile_helper t location
 
-let remove_tile (p : t) x = let current_tiles = p.player_tiles in 
-{p with player_tiles = remove_tile_helper current_tiles x}
+let remove_tile (p : t) x =
+  let current_tiles = p.player_tiles in
+  { p with player_tiles = remove_tile_helper current_tiles x }
 
-(**[lower_left st] returns the lower left corner of the rectangle surrounding 
-the current point [st]*)
-let lower_left x = 
-  if x > 456 && x < 509 then 456 
+(**[lower_left st] returns the lower left corner of the rectangle
+   surrounding the current point [st]*)
+let lower_left x =
+  if x > 456 && x < 509 then 456
   else if x > 509 && x < 562 then 509
   else if x > 562 && x < 615 then 562
   else if x > 615 && x < 668 then 615
@@ -132,15 +134,19 @@ let lower_left x =
   else if x > 774 && x < 827 then 774
   else 0
 
-(**[clicked_helper p x y] returns the tile at location [(x,y)] inside [p]*)
-let rec clicked_helper (p : t) x y = 
-  if y > 30 && y < 83 then let location = lower_left x in 
- let current_tiles = p.player_tiles in 
- match current_tiles with 
-  | [] -> empty_tile1
-  | h :: t -> if x_location h = location then h else 
-    clicked_helper {p with player_tiles = t} x y 
+(**[clicked_helper p x y] returns the tile at location [(x,y)] inside
+   [p]*)
+let rec clicked_helper (p : t) x y =
+  if y > 30 && y < 83 then
+    let location = lower_left x in
+    let current_tiles = p.player_tiles in
+    match current_tiles with
+    | [] -> empty_tile1
+    | h :: t ->
+        if x_location h = location then h
+        else clicked_helper { p with player_tiles = t } x y
   else empty_tile1
 
-let clicked (p : t) x y  = 
- let tile = clicked_helper p x y in if tile.letter = "" then false else true
+let clicked (p : t) x y =
+  let tile = clicked_helper p x y in
+  if tile.letter = "" then false else true
