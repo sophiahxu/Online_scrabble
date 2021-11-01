@@ -43,15 +43,29 @@ let y_location tile =
   match tile.location with
   | _, y -> y
 
+(**[draw_blank tile] draws a white rectangle at [tile]'s location*)
+let draw_blank tile =  
+  let x = x_location tile in
+  let y = y_location tile in 
+  set_color white;
+  fill_rect (x + 15) (y + 15) 24 24
+
+(**[draw_letter tile] draws a beige rectangle at [tile]'s location*)
+let draw_letter tile = 
+  let x = x_location tile in
+  let y = y_location tile in 
+    set_color 0xfce283;
+    fill_rect (x + 15) (y + 15) 24 24;
+    set_color black;
+    moveto (x + 23) (y + 23);
+    draw_string tile.letter
+
 let rec draw p =
   let current_tiles = p.player_tiles in
   match current_tiles with
   | [] -> draw_string ""
   | h :: t ->
-      let x = x_location h in
-      let y = y_location h in
-      moveto (x + 23) (y + 23);
-      draw_string h.letter;
+      if h.letter = "" then draw_blank h else draw_letter h;
       draw { p with player_tiles = t }
 
 let empty_tile1 = make_tile "" (456, 30) 10
@@ -150,3 +164,6 @@ let rec clicked_helper (p : t) x y =
 let clicked (p : t) x y =
   let tile = clicked_helper p x y in
   if tile.letter = "" then false else true
+
+let letter (p : t) x y = let tile = clicked_helper p x y in 
+tile.letter
