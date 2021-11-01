@@ -1,5 +1,3 @@
-open Graphics
-
 type t
 (**Represents a player*)
 
@@ -29,10 +27,6 @@ val add_tile : t -> string -> t
 val draw_tiles : t -> unit
 (**[draw_tiles p] draws the tiles of [p] at each tiles specified
    location*)
-
-val erase : status -> unit
-(**[erase st] erases whatever is in the current rectangle surrounding
-   the current mouse position of [st]*)
 
 val remove_tile : t -> int -> t
 (**[remove_tile p l] removes the tile at location [l] inside [p]'s tiles*)

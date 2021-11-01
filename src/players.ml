@@ -117,13 +117,12 @@ let rec remove_tile_helper player_tiles location =
     if x = location then {h with letter = ""} :: t 
     else h :: remove_tile_helper t location
 
-let remove_tile (p : t) location = let current_tiles = p.player_tiles in 
-{p with player_tiles = remove_tile_helper current_tiles location}
+let remove_tile (p : t) x = let current_tiles = p.player_tiles in 
+{p with player_tiles = remove_tile_helper current_tiles x}
 
 (**[lower_left st] returns the lower left corner of the rectangle surrounding 
 the current point [st]*)
-let lower_left st = 
-  let x = st.mouse_x in 
+let lower_left x = 
   if x > 456 && x < 509 then 456 
   else if x > 509 && x < 562 then 509
   else if x > 562 && x < 615 then 562
@@ -133,8 +132,6 @@ let lower_left st =
   else if x > 774 && x < 827 then 774
   else 0
 
-let erase st = 
- set_color white;
- if st.button then 
- if st.mouse_y > 30 && st.mouse_y < 73 then let x = lower_left st in
-  fill_rect x 30 53 53
+(*returns true if clicked on a non-empty tile*)
+(* let clicked (p : t) x y  = 
+ if y > 30 && y < 73 then let location = lower_left x in  *)
