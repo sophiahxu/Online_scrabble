@@ -236,7 +236,12 @@ let draw board =
 let rec find_tile x y tiles side =
   match tiles with
   | [] -> None
-  | h :: t when x > tile_x h + side && y < tile_y h + side -> Some h
+  | h :: t
+    when x < tile_x h + side
+         && x > tile_x h
+         && y > tile_y h
+         && y < tile_y h + side ->
+      Some h
   | _ :: t -> find_tile x y t side
 
 let clicked x y board =
@@ -250,11 +255,11 @@ let rec replace_tile tiles n new_letter =
   | [] -> []
   | h :: t when h.name = n ->
       { h with letter = Some new_letter; turn = true } :: t
-  | _ :: t -> replace_tile t n new_letter
+  | h :: t -> h :: replace_tile t n new_letter
 
 let add_tile x y letter board =
   let tile = find_tile x y (tiles board) (side board) in
   match tile with
   | None -> board
-  | Some x ->
-      { board with tiles = replace_tile (tiles board) (name x) letter }
+  | Some z ->
+      { board with tiles = replace_tile (tiles board) (name z) letter }

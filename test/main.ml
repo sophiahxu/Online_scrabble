@@ -72,7 +72,7 @@ let fortyfifth_tile = nth tile_list 45
 
 let last_tile = nth tile_list (List.length tile_list - 1)
 
-let board2 = Board.add_tile 400 400 "A" board
+let board2 = Board.add_tile 700 600 "A" board
 
 let board_tests =
   [
@@ -107,40 +107,47 @@ let board_tests =
     clicked_test "0, 0 is not on the board" false 0 0 board;
     clicked_test "600, 400 is on the board" true 600 400 board;
     clicked_test
-      "400, 400 is not on the board after a tile has been added \n\
+      "700, 600 is not on the board after a tile has been added \n\
       \    there" false 400 400 board2;
+    clicked_test
+      "500, 300 is on the board after a tile has been added at 700, 600"
+      true 500 300 board2;
+    clicked_test
+      "405, 123 is on the board after a tile has beena dded at 700, 600"
+      true 405 123 board2;
   ]
 
 (**[player_points name expected_output player] constructs an OUnit test
-  named [name] that asserts the quality of [expected_output] with the
-  points of [player]*)
+   named [name] that asserts the quality of [expected_output] with the
+   points of [player]*)
 let player_points_test name expected_output player =
   name >:: fun _ ->
   assert_equal expected_output (player_points player)
     ~printer:string_of_int
 
 (**[player_names name expected_output player] constructs an OUnit test
-  named [name] that asserts the quality of [expected_output] with the
-  name of [player]*)
+   named [name] that asserts the quality of [expected_output] with the
+   name of [player]*)
 let player_names_test name expected_output player =
   name >:: fun _ ->
   assert_equal expected_output (player_name player) ~printer:(fun x ->
       x)
 
-(**[num_tiles name expected_output player] constructs an OUnit test named
-  [name] that asserts the quality of [expected_output] with the number
-  of tiles of [player]*)
+(**[num_tiles name expected_output player] constructs an OUnit test
+   named [name] that asserts the quality of [expected_output] with the
+   number of tiles of [player]*)
 let num_tiles_test name expected_output player =
   name >:: fun _ ->
   assert_equal expected_output (num_tiles player) ~printer:string_of_int
 
-(**[pclicked_test name_expected output player x y] constructs an OUnit test 
-named [name] that asserts the quality of [expected_output] with the clicked 
-location [(x,y)] of [player]*)
+(**[pclicked_test name_expected output player x y] constructs an OUnit
+   test named [name] that asserts the quality of [expected_output] with
+   the clicked location [(x,y)] of [player]*)
 let pclicked_test name expected_output player x y =
   name >:: fun _ ->
-  assert_equal expected_output (Player.clicked player x y)
-   ~printer:string_of_bool
+  assert_equal expected_output
+    (Player.clicked player x y)
+    ~printer:string_of_bool
 
 let player = Player.init "Player 1"
 
@@ -203,9 +210,11 @@ let players_tests =
     num_tiles_test "Removing 5 tiles" 2 player_remove5t;
     num_tiles_test "Removing 6 tiles" 1 player_remove6t;
     num_tiles_test "Removing 7 tiles" 0 player_remove7t;
-    pclicked_test "Player1t has non-empty tile at 456" true player1t 480 35;
+    pclicked_test "Player1t has non-empty tile at 456" true player1t 480
+      35;
     pclicked_test "Player1t has empty tile at 509" false player1t 555 40;
-    pclicked_test "Player7t has non-empty tile at 774" true player7t 780 43
+    pclicked_test "Player7t has non-empty tile at 774" true player7t 780
+      43;
   ]
 
 (**[count_test name expected_output b] constructs an OUnit test named
