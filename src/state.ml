@@ -3,6 +3,8 @@ open Player
 open Bag
 open Graphics
 
+exception NotFoundError
+
 type bonus =
   | Letter of int
   | Word of int  (** Represents the score bonuses for scrabble. *)
