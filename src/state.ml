@@ -32,8 +32,6 @@ type t = {
   turn : Player.t; (* player whose turn it is currently *)
 }
 
-let draw_tile (state : t) (p : Player.t) : t = state
-
 (** [init_key () is the scrabble scoring key] *)
 let init_key () =
   {
@@ -151,18 +149,12 @@ let rec player_boxes l h num =
     draw_string ("Player " ^ string_of_int num);
     if num > 0 then player_boxes l h (num - 1)
 
-let init_draw t =
-  Board.draw t.board;
-  Player.init_draw ();
-  Bag.init_draw ();
-  draw_key ();
-  player_boxes 800 625 4
-
 let click x y state =
   match state.event with
   | Play ->
       if Bag.clicked x y then
-        if Player.num_tiles state.turn < 7 then
+        if Player.num_tiles state.turn < 7 && Bag.count state.bag > 0
+        then
           let letter = Bag.find_letter state.bag in
           {
             state with
@@ -179,7 +171,10 @@ let click x y state =
           state with
           event = Play;
           turn = Player.remove_tile state.turn x0;
-          board = Board.add_tile x y "A" state.board;
+          board =
+            Board.add_tile x y
+              (Player.letter state.turn x0 35)
+              state.board;
         }
       else { state with event = Play }
 
@@ -189,3 +184,8 @@ let draw (state : t) : unit =
   Player.draw state.turn;
   Bag.draw state.bag;
   Board.draw state.board
+
+let init_draw state =
+  draw_key ();
+  player_boxes 800 625 4;
+  draw state

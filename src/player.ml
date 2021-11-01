@@ -44,29 +44,41 @@ let y_location tile =
   | _, y -> y
 
 (**[draw_blank tile] draws a white rectangle at [tile]'s location*)
-let draw_blank tile =  
+let draw_blank tile =
   let x = x_location tile in
-  let y = y_location tile in 
+  let y = y_location tile in
   set_color white;
   fill_rect (x + 15) (y + 15) 24 24
 
 (**[draw_letter tile] draws a beige rectangle at [tile]'s location*)
-let draw_letter tile = 
+let draw_letter tile =
   let x = x_location tile in
-  let y = y_location tile in 
-    set_color 0xfce283;
-    fill_rect (x + 15) (y + 15) 24 24;
-    set_color black;
-    moveto (x + 23) (y + 23);
-    draw_string tile.letter
+  let y = y_location tile in
+  set_color 0xfce283;
+  fill_rect (x + 15) (y + 15) 24 24;
+  set_color black;
+  moveto (x + 23) (y + 23);
+  draw_string tile.letter
 
-let rec draw p =
-  let current_tiles = p.player_tiles in
-  match current_tiles with
+(** [draw_helper tiles] draws the tiles in [tiles] to the screen. *)
+let rec draw_helper tiles =
+  match tiles with
   | [] -> draw_string ""
   | h :: t ->
       if h.letter = "" then draw_blank h else draw_letter h;
-      draw { p with player_tiles = t }
+      draw_helper t
+
+(**[draw_row w h num x y] draws a row of [num] rectangles of width [w]
+   and height [h]. The lower left corner of the row begins at the
+   coordinates ([x], [y]) Requires: [w], [h] > 0. [num], [x], [y] >= 0.*)
+let rec draw_row w h num x y =
+  if num <= 0 then () else draw_rect x y w h;
+  if num > 0 then draw_row w h (num - 1) (x + w) y
+
+let draw p =
+  set_color black;
+  draw_row 53 53 7 456 30;
+  draw_helper p.player_tiles
 
 let empty_tile1 = make_tile "" (456, 30) 10
 
@@ -81,13 +93,6 @@ let empty_tile5 = make_tile "" (668, 30) 10
 let empty_tile6 = make_tile "" (721, 30) 10
 
 let empty_tile7 = make_tile "" (774, 30) 10
-
-(**[draw_row w h num x y] draws a row of [num] rectangles of width [w]
-   and height [h]. The lower left corner of the row begins at the
-   coordinates ([x], [y]) Requires: [w], [h] > 0. [num], [x], [y] >= 0.*)
-let rec draw_row w h num x y =
-  if num <= 0 then () else draw_rect x y w h;
-  if num > 0 then draw_row w h (num - 1) (x + w) y
 
 let init name =
   {
@@ -104,10 +109,6 @@ let init name =
         empty_tile7;
       ];
   }
-
-let init_draw () =
-  set_color black;
-  draw_row 53 53 7 456 30
 
 (**[add_tile_list player_tiles letter] replaces an empty tile in
    [player_tiles] with a new tile with [letter]*)
@@ -165,5 +166,6 @@ let clicked (p : t) x y =
   let tile = clicked_helper p x y in
   if tile.letter = "" then false else true
 
-let letter (p : t) x y = let tile = clicked_helper p x y in 
-tile.letter
+let letter (p : t) x y =
+  let tile = clicked_helper p x y in
+  tile.letter

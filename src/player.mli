@@ -5,9 +5,6 @@ val init : string -> t
 (**[init s] initializes a player with name [s], who starts with zero
    points and seven empty tiles*)
 
-val init_draw : unit -> unit
-(**[init_draw ()] draws the initial tiles for [p].*)
-
 val add_points : t -> int -> t
 (**[add_points p pt] adds [pt] points to player [p]*)
 
@@ -25,8 +22,8 @@ val add_tile : t -> string -> t
    available tile location*)
 
 val draw : t -> unit
-(**[draw_tiles p] draws the tiles of [p] at each tiles specified
-   location*)
+(**[draw_tiles p] draws the tile holder and the tiles of [p] at each
+   tiles specified location*)
 
 val remove_tile : t -> int -> t
 (**[remove_tile p l] removes the tile at location [l] inside [p]'s tiles*)
