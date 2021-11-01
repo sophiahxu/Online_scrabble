@@ -218,10 +218,14 @@ let rec grid tiles side =
 let rec letter_grid tiles =
   match tiles with
   | [] -> ()
-  | h :: t ->
+  | h :: t when letter h != "" ->
+      set_color 0xFCE283;
+      fill_rect (tile_x h + 4) (tile_y h + 4) 24 24;
       moveto (tile_x h + 13) (tile_y h + 10);
+      set_color black;
       draw_string (letter h);
       letter_grid t
+  | _ :: t -> letter_grid t
 
 (**[init_draw board] draws the initial board with the correct tile
    colors.*)
