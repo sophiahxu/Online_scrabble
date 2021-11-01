@@ -26,10 +26,13 @@ val tile_y : t -> int
 (**[tile_y a] is the y coordinate of the tile [a].*)
 
 val color : t -> int option
-(**[color a] is the color of the tile [a]*)
+(**[color a] is the color of the tile [a].*)
 
 val letter : t -> string
 (**[letter a] is the letter on tile [a].*)
+
+val turn : t -> bool
+(**[turn a] is whether or not the tile was placed on the current turn.*)
 
 val clicked : int -> int -> b -> bool
 (**[clicked x y] is whether or not the dimension *)

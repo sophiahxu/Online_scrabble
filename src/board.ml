@@ -186,6 +186,8 @@ let letter tile =
   | Some x -> x
   | None -> ""
 
+let turn tile = tile.turn
+
 (**[color_grid tiles side] adds color to the rectangles as described by
    [tiles] by using the colors and locations in this list. Each
    rectangle that is colored has a length and width of [side]. Requires:
@@ -216,10 +218,14 @@ let rec grid tiles side =
 let rec letter_grid tiles =
   match tiles with
   | [] -> ()
-  | h :: t ->
+  | h :: t when letter h != "" ->
+      set_color 0xFCE283;
+      fill_rect (tile_x h + 4) (tile_y h + 4) 24 24;
       moveto (tile_x h + 13) (tile_y h + 10);
+      set_color black;
       draw_string (letter h);
       letter_grid t
+  | _ :: t -> letter_grid t
 
 (**[init_draw board] draws the initial board with the correct tile
    colors.*)
