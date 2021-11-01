@@ -188,8 +188,4 @@ let game_over state = false
 let draw (state : t) : unit =
   Player.draw state.turn;
   Bag.draw state.bag;
-  Board.draw state.board;
-  moveto 0 0;
-  match state.event with
-  | Play -> ()
-  | Tile_clicked x0 -> draw_string (string_of_int x0)
+  Board.draw state.board
