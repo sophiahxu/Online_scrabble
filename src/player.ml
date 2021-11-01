@@ -108,20 +108,6 @@ let add_tile (p : t) letter =
   let current_tiles = p.player_tiles in
   { p with player_tiles = change_tile current_tiles letter }
 
-(**[remove_tile_helper player_tiles location] removes the the tile at
-   [location] within player_tiles*)
-let rec remove_tile_helper player_tiles location =
-  match player_tiles with
-  | [] -> []
-  | h :: t ->
-      let x = x_location h in
-      if x = location then { h with letter = "" } :: t
-      else h :: remove_tile_helper t location
-
-let remove_tile (p : t) x =
-  let current_tiles = p.player_tiles in
-  { p with player_tiles = remove_tile_helper current_tiles x }
-
 (**[lower_left st] returns the lower left corner of the rectangle
    surrounding the current point [st]*)
 let lower_left x =
@@ -133,6 +119,20 @@ let lower_left x =
   else if x > 721 && x < 774 then 721
   else if x > 774 && x < 827 then 774
   else 0
+
+(**[remove_tile_helper player_tiles location] removes the the tile at
+   [location] within player_tiles*)
+let rec remove_tile_helper player_tiles location =
+  match player_tiles with
+  | [] -> []
+  | h :: t ->
+      let x = x_location h in
+      if x = lower_left location then { h with letter = "" } :: t
+      else h :: remove_tile_helper t location
+
+let remove_tile (p : t) x =
+  let current_tiles = p.player_tiles in
+  { p with player_tiles = remove_tile_helper current_tiles x }
 
 (**[clicked_helper p x y] returns the tile at location [(x,y)] inside
    [p]*)
