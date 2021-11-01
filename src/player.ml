@@ -12,7 +12,7 @@ type t = {
   player_tiles : player_tile list;
 }
 
-let add_points (p : t)  points =
+let add_points (p : t) points =
   let original = p.point_total in
   { p with point_total = original + points }
 
@@ -43,7 +43,7 @@ let y_location tile =
   match tile.location with
   | _, y -> y
 
-let rec draw_tiles p =
+let rec draw p =
   let current_tiles = p.player_tiles in
   match current_tiles with
   | [] -> draw_string ""
@@ -52,7 +52,7 @@ let rec draw_tiles p =
       let y = y_location h in
       moveto (x + 23) (y + 23);
       draw_string h.letter;
-      draw_tiles { p with player_tiles = t }
+      draw { p with player_tiles = t }
 
 let empty_tile1 = make_tile "" (456, 30) 10
 
@@ -96,7 +96,7 @@ let init_draw () =
   draw_row 53 53 7 456 30
 
 (**[add_tile_list player_tiles letter] replaces an empty tile in
-  [player_tiles] with a new tile with [letter]*)
+   [player_tiles] with a new tile with [letter]*)
 let rec change_tile player_tiles letter =
   match player_tiles with
   | [] -> []
@@ -108,10 +108,10 @@ let add_tile (p : t) letter =
   let current_tiles = p.player_tiles in
   { p with player_tiles = change_tile current_tiles letter }
 
-(**[remove_tile_helper player_tiles location] removes the the tile at 
-[location] within player_tiles*)
-let rec remove_tile_helper player_tiles location = 
-  match player_tiles with 
+(**[remove_tile_helper player_tiles location] removes the the tile at
+   [location] within player_tiles*)
+let rec remove_tile_helper player_tiles location =
+  match player_tiles with
   | [] -> []
   | h :: t -> let x = x_location h in 
     if x = location then {h with letter = ""} :: t 
@@ -132,6 +132,15 @@ let lower_left x =
   else if x > 774 && x < 827 then 774
   else 0
 
-(*returns true if clicked on a non-empty tile*)
-(* let clicked (p : t) x y  = 
- if y > 30 && y < 73 then let location = lower_left x in  *)
+(**[clicked_helper p x y] returns the tile at location [(x,y)] inside [p]*)
+let rec clicked_helper (p : t) x y = 
+  if y > 30 && y < 83 then let location = lower_left x in 
+ let current_tiles = p.player_tiles in 
+ match current_tiles with 
+  | [] -> empty_tile1
+  | h :: t -> if x_location h = location then h else 
+    clicked_helper {p with player_tiles = t} x y 
+  else empty_tile1
+
+let clicked (p : t) x y  = 
+ let tile = clicked_helper p x y in if tile.letter = "" then false else true
