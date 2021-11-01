@@ -74,14 +74,6 @@ let init () =
       ];
   }
 
-(**[init_draw ()] draws the initial bag button and its labels.*)
-let init_draw () =
-  draw_circle 288 90 60;
-  moveto 276 92;
-  draw_string "DRAW";
-  moveto 252 74;
-  draw_string "98 tiles left"
-
 let clicked x y =
   x > 222 && x < 348
   && float_of_int y
@@ -91,7 +83,7 @@ let clicked x y =
        +. 90.
 
 let draw bag =
-  set_color white;
+  set_color 0x8282E8;
   fill_circle 288 90 60;
   set_color black;
   draw_circle 288 90 60;

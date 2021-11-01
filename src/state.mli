@@ -8,11 +8,6 @@ val init : unit -> t
 val init_draw : t -> unit
 (**[init_draw state] draws the initial state of the game.*)
 
-val draw_tile : t -> Player.t -> t
-(** [draw_tile state player] adds a random tile from the bag to the
-    [player]'s tiles and removes that tile from bag if [player] has <= 7
-    tiles.*)
-
 val click : int -> int -> t -> t
 (**[click x y state] is an updated [state] depending on the location [x]
    and [y] of where the mouse clicked.*)
