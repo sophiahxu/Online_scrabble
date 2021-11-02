@@ -172,9 +172,7 @@ let click x y state =
           event = Play;
           turn = Player.remove_tile state.turn x0;
           board =
-            Board.add_tile x y
-              (Player.letter state.turn x0 35)
-              state.board;
+            Board.add_tile x y (Player.letter state.turn x0) state.board;
         }
       else { state with event = Play }
 
