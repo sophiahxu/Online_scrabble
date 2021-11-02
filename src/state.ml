@@ -25,7 +25,7 @@ type t = {
   (* scrabble scoring key *)
   board : Board.b;
   (* scrabble board *)
-  bag : Bag.b;
+  bag : Bag.t;
   (* bag of unused tiles *)
   players : Player.t list;
   (* list of players *)
