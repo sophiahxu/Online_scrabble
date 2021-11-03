@@ -166,6 +166,6 @@ let clicked (p : t) x y =
   let tile = clicked_helper p x y in
   if tile.letter = "" then false else true
 
-let letter (p : t) x y =
-  let tile = clicked_helper p x y in
+let letter (p : t) l =
+  let tile = clicked_helper p l 35 in
   tile.letter

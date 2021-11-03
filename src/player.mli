@@ -32,6 +32,6 @@ val clicked : t -> int -> int -> bool
 (**[clicked p x y] returns true if the tile at location [(x,y)] is
    non-empty inside player [p], and returns false if the tile is empty*)
 
-val letter : t -> int -> int -> string
-(**[letter p x y] returns the letter at location [(x,y)] inside player
-   [p]'s tiles*)
+val letter : t -> int -> string
+(**[letter p l] returns the letter at location [l] inside player [p]'s
+   tiles*)
