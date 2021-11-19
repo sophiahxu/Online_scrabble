@@ -3,7 +3,7 @@ open Graphics
 type bag_tile = string * int
 (** represents a tile in the bag *)
 
-type b = {
+type t = {
   count : int;
   tiles : bag_tile list;
 }
@@ -16,11 +16,11 @@ let rec find_letter_helper (tiles : bag_tile list) (n : int) : string =
   | [] -> raise (Failure "Invalid n argument.")
   | (l, c) :: t -> if n <= c then l else find_letter_helper t (n - c)
 
-let find_letter (b : b) : string =
+let find_letter (bag : t) : string =
   Random.self_init ();
-  let n = Random.int b.count + 1 in
+  let n = Random.int bag.count + 1 in
   (*n is in [1..b.count]*)
-  find_letter_helper b.tiles n
+  find_letter_helper bag.tiles n
 
 (** [remove_helper tiles letter] removes [letter] from [tiles].
     Requires: [letter] must exist in a quantity of at least 1 in
@@ -33,10 +33,10 @@ let rec remove_helper (tiles : bag_tile list) (letter : string) :
       if l = letter then (l, n - 1) :: remove_helper t letter
       else (l, n) :: remove_helper t letter
 
-let remove (bag : b) (letter : string) : b =
+let remove (bag : t) (letter : string) : t =
   { count = bag.count - 1; tiles = remove_helper bag.tiles letter }
 
-let count (bag : b) : int = bag.count
+let count (bag : t) : int = bag.count
 
 let count_letter bag letter = List.assoc letter bag.tiles
 

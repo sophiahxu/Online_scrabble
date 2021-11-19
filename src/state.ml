@@ -27,7 +27,7 @@ type t = {
   (* scrabble scoring key *)
   board : Board.b;
   (* scrabble board *)
-  bag : Bag.b;
+  bag : Bag.t;
   (* bag of unused tiles *)
   players : Player.t list;
   (* list of players *)
@@ -174,9 +174,7 @@ let click x y state =
           event = Play;
           turn = Player.remove_tile state.turn x0;
           board =
-            Board.add_tile x y
-              (Player.letter state.turn x0 35)
-              state.board;
+            Board.add_tile x y (Player.letter state.turn x0) state.board;
         }
       else { state with event = Play }
 
