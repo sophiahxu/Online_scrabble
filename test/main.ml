@@ -8,14 +8,6 @@ let id x = x
 
 exception NotFoundError
 
-(**[nth lst n] is the element of [lst] with index [n]. Raises:
-   NotFoundError if [n] >= List.length lst.*)
-let rec nth lst n =
-  match lst with
-  | [] -> raise NotFoundError
-  | a :: _ when n = 0 -> a
-  | _ :: b -> nth b (n - 1)
-
 (**[string_of_int_option] is the string of int option [x].*)
 let string_of_int_option x =
   match x with
@@ -54,7 +46,8 @@ let color_test name expected_output t =
 (**[letter_test name expected_output t] constructs an OUnit test named
    [name] that asserts the quality of [expected_output] with letter [t]*)
 let letter_test name expected_output t =
-  name >:: fun _ -> assert_equal expected_output (Board.letter t) ~printer:id
+  name >:: fun _ ->
+  assert_equal expected_output (Board.letter t) ~printer:id
 
 let clicked_test name expected_output x y board =
   name >:: fun _ ->
@@ -66,11 +59,11 @@ let board = Board.init ()
 
 let tile_list = tiles board
 
-let first_tile = nth tile_list 0
+let first_tile = List.nth tile_list 0
 
-let fortyfifth_tile = nth tile_list 45
+let fortyfifth_tile = List.nth tile_list 45
 
-let last_tile = nth tile_list (List.length tile_list - 1)
+let last_tile = List.nth tile_list (List.length tile_list - 1)
 
 let board2 = Board.add_tile 700 600 "A" board
 
@@ -95,13 +88,13 @@ let board_tests =
     color_test "First element of tile list has color 0xFF0000"
       (Some 0xFF0000) first_tile;
     color_test "Index 3 of tile list has color 0x8282E8" (Some 0x8282E8)
-      (nth tile_list 3);
+      (List.nth tile_list 3);
     color_test "Index 16 of tile list has color 0xE88282"
-      (Some 0xE88282) (nth tile_list 16);
+      (Some 0xE88282) (List.nth tile_list 16);
     color_test "Index 20 of tile list has color 0x0000FF"
-      (Some 0x0000FF) (nth tile_list 20);
+      (Some 0x0000FF) (List.nth tile_list 20);
     color_test "Index 2 of tile list has color None" None
-      (nth tile_list 2);
+      (List.nth tile_list 2);
     letter_test "First element of tile list has letter empty string" ""
       first_tile;
     clicked_test "0, 0 is not on the board" false 0 0 board;
