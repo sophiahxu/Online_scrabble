@@ -15,13 +15,13 @@ type key = {
 }
 (** Represents the scoring key for scrabble. *)
 
-type event =
+type mode =
   | Play
   | Tile_clicked of int
       (** Represents a description of the current state of the game. *)
 
 type t = {
-  event : event;
+  mode : mode;
   (* description of the current state of the game. *)
   key : key;
   (* scrabble scoring key *)
@@ -78,7 +78,7 @@ let init_key () =
 let init () =
   let players = [ Player.init "1" ] in
   {
-    event = Play;
+    mode = Play;
     board = Board.init ();
     players;
     bag = Bag.init ();
@@ -152,7 +152,7 @@ let rec player_boxes l h num =
     if num > 0 then player_boxes l h (num - 1)
 
 let click x y state =
-  match state.event with
+  match state.mode with
   | Play ->
       if Bag.clicked x y then
         if Player.num_tiles state.turn < 7 && Bag.count state.bag > 0
@@ -165,18 +165,18 @@ let click x y state =
           }
         else state
       else if Player.clicked state.turn x y then
-        { state with event = Tile_clicked x }
+        { state with mode = Tile_clicked x }
       else state
   | Tile_clicked x0 ->
       if Board.clicked x y state.board then
         {
           state with
-          event = Play;
+          mode = Play;
           turn = Player.remove_tile state.turn x0;
           board =
             Board.add_tile x y (Player.letter state.turn x0) state.board;
         }
-      else { state with event = Play }
+      else { state with mode = Play }
 
 let game_over state = false
 
