@@ -241,6 +241,22 @@ let bag2 = remove bag "A"
 
 let bag3 = remove bag2 "Z"
 
+let bag4 = remove bag3 "A"
+
+let bag5 = remove bag4 "A"
+
+let bag6 = remove bag5 "A"
+
+let bag7 = remove bag6 "A"
+
+let bag8 = remove bag7 "A"
+
+let bag9 = remove bag8 "A"
+
+let bag10 = remove bag9 "A"
+
+let bag11 = remove bag10 "A"
+
 let bag_tests =
   [
     count_test "New bag has 98 letters" 98 bag;
@@ -250,6 +266,15 @@ let bag_tests =
     count_test "Bag with 'A' and 'Z' removed has 96 letters" 96 bag3;
     count_letter_test "Bag with 'A' and 'Z' removed has 0 'Z's" 0 bag3
       "Z";
+    count_letter_test "Bag with 2 A's removed has 7 A's" 7 bag4 "A";
+    count_letter_test "Bag with 3 A's removed has 6 A's" 6 bag5 "A";
+    count_letter_test "Bag with 4 A's removed has 5 A's" 5 bag6 "A";
+    count_letter_test "Bag with 5 A's removed has 4 A's" 4 bag7 "A";
+    count_letter_test "Bag with 6 A's removed has 3 A's" 3 bag8 "A";
+    count_letter_test "Bag with 7 A's removed has 2 A's" 2 bag9 "A";
+    count_letter_test "Bag with 8 A's removed has 1 A" 1 bag10 "A";
+    count_letter_test "Bag with 9 A's removed has 0 A's" 0 bag11 "A";
+    count_test "Bag with all A's and Z's removed" 88 bag11;
   ]
 
 let tests =
