@@ -1,3 +1,4 @@
+.PHONY: test
 build:
 	dune build
 
