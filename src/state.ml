@@ -16,9 +16,10 @@ type key = {
 (** Represents the scoring key for scrabble. *)
 
 type mode =
-  | Play
-  | Tile_clicked of int
-      (** Represents a description of the current state of the game. *)
+  | Draw
+  | Click
+  | Point of int
+  | Challenge  (** Represents the input mode that the game is in. *)
 
 type t = {
   mode : mode;
@@ -31,7 +32,9 @@ type t = {
   (* bag of unused tiles *)
   players : Player.t list;
   (* list of players *)
-  turn : Player.t; (* player whose turn it is currently *)
+  turn : Player.t;
+  (* player whose turn it is currently *)
+  game_over : bool; (* whether the game is over *)
 }
 
 (** [init_key () is the scrabble scoring key] *)
@@ -76,14 +79,22 @@ let init_key () =
   }
 
 let init () =
-  let players = [ Player.init "1" ] in
+  let players =
+    [
+      Player.init "Player 1";
+      Player.init "Player 2";
+      Player.init "Player 3";
+      Player.init "Player 4";
+    ]
+  in
   {
-    mode = Play;
+    mode = Draw;
     board = Board.init ();
     players;
     bag = Bag.init ();
     key = init_key ();
     turn = List.hd players;
+    game_over = false;
   }
 
 (**[color_key color phrase x y w h] draws a rectangle with lower left
@@ -153,7 +164,7 @@ let rec player_boxes l h num =
 
 let click x y state =
   match state.mode with
-  | Play ->
+  | Draw ->
       if Bag.clicked x y then
         if Player.num_tiles state.turn < 7 && Bag.count state.bag > 0
         then
@@ -165,20 +176,25 @@ let click x y state =
           }
         else state
       else if Player.clicked state.turn x y then
-        { state with mode = Tile_clicked x }
+        { state with mode = Point x }
       else state
-  | Tile_clicked x0 ->
+  | Click ->
+      if Player.clicked state.turn x y then
+        { state with mode = Point x }
+      else state
+  | Point x0 ->
       if Board.clicked x y state.board then
         {
           state with
-          mode = Play;
+          mode = Click;
           turn = Player.remove_tile state.turn x0;
           board =
             Board.add_tile x y (Player.letter state.turn x0) state.board;
         }
-      else { state with mode = Play }
+      else { state with mode = Click }
+  | Challenge -> state
 
-let game_over state = false
+let game_over state = state.game_over
 
 let draw (state : t) : unit =
   Player.draw state.turn;
@@ -189,3 +205,18 @@ let init_draw state =
   draw_key ();
   player_boxes 800 625 4;
   draw state
+
+let next_turn state =
+  {
+    state with
+    mode = Draw;
+    turn = Player.next_turn state.turn state.players;
+    players = Player.update_player state.turn state.players;
+  }
+
+let undo state =
+  {
+    state with
+    turn = Player.undo state.turn;
+    board = Board.undo state.board;
+  }

@@ -18,3 +18,10 @@ val draw : t -> unit
 
 val game_over : t -> bool
 (**[game_over state] is true with the game is over, else it is false.*)
+
+val next_turn : t -> t
+(**[next_turn state] is [state] updated to be the next player's turn.*)
+
+val undo : t -> t
+(**[undo state] is an updated [state] with the most recent tile
+   placement of the current player undone.*)

@@ -42,3 +42,7 @@ val add_tile : int -> int -> string -> b -> b
    with one that has the letter [l]. Requires: x, y are coordinates of a
    valid tile to replace (i.e. one that does not already have a letter
    on it and is on the board)*)
+
+val undo : b -> b
+(**[undo board] is [board] with the latest tile placement undone. If
+   there have been no new placements yet this turn, no changes are made.*)

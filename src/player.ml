@@ -169,3 +169,21 @@ let clicked (p : t) x y =
 let letter (p : t) l =
   let tile = clicked_helper p l 35 in
   tile.letter
+
+let rec update_player p p_list =
+  match p_list with
+  | [] -> failwith "Player not found"
+  | h :: t -> if h.name = p.name then p :: t else h :: update_player p t
+
+let next_turn p p_list =
+  let rec next_turn_aux lst =
+    match lst with
+    | [] -> failwith "Player not found"
+    | [ h ] -> raise (Failure "Last element")
+    | h1 :: h2 :: t ->
+        if h1.name = p.name then h2 else next_turn_aux (h2 :: t)
+  in
+  try next_turn_aux p_list with
+  | Failure _ -> List.hd p_list
+
+let undo p = failwith "unimplemented"

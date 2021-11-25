@@ -269,3 +269,5 @@ let add_tile x y letter board =
   | None -> board
   | Some z ->
       { board with tiles = replace_tile (tiles board) (name z) letter }
+
+let undo board = failwith "unimplemented"

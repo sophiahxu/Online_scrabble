@@ -35,3 +35,18 @@ val clicked : t -> int -> int -> bool
 val letter : t -> int -> string
 (**[letter p l] returns the letter at location [l] inside player [p]'s
    tiles*)
+
+val update_player : t -> t list -> t list
+(**[update_player player player_list] is [player_list] with the correct
+   player in the list updated according to [player]. Requires: [player]
+   must have the same name as exactly one player in [player_list].*)
+
+val next_turn : t -> t list -> t
+(**[next_turn player player_list] is the next player in [player_list].
+   Requires: [player] must have the same name as exactly one player in
+   [player_list], and [player_list] has length of at least 2.*)
+
+val undo : t -> t
+(**[undo player] is [player] with it's latest tile placement undone. If
+   the [player] has not made any moves yet this turn, no changes are
+   made.*)

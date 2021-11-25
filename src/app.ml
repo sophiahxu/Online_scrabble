@@ -65,7 +65,7 @@ and loading_initial_update () =
   moveto 300 250;
   draw_string "Let's Play Scrabble! Click the Play Button to Start.";
   moveto 390 225;
-  draw_string "Press Any Key to Exit";
+  draw_string "Press 'Esc' to Exit";
 
   moveto 440 305;
   draw_string "PLAY";
@@ -74,7 +74,8 @@ and loading_initial_update () =
 (**[initial_update st] updates the game during game state [Initial].*)
 and initial_update () =
   let sta = wait_next_event [ Button_down; Key_pressed ] in
-  if sta.keypressed then raise Exit;
+  if sta.keypressed then
+    if sta.key = '\027' then raise Exit else initial_update ();
   if sta.button then
     if
       sta.mouse_x > 350 && sta.mouse_x < 550 && sta.mouse_y > 275
@@ -97,7 +98,15 @@ and active_update st =
   else
     let status1 = wait_next_event [ Key_pressed; Button_down ] in
     (* Raise Exit when key pressed. *)
-    if status1.keypressed then raise Exit
+    if status1.keypressed then
+      if status1.key = '\r' then (
+        State.draw (State.next_turn st);
+        active_update (State.next_turn st))
+      else if status1.key = '\027' then raise Exit
+      else if status1.key = 'z' then (
+        State.draw (State.undo st);
+        active_update (State.undo st))
+      else active_update st
     else if status1.button then (
       (* Wait for mouse to not be clicked to prevent double clicking. *)
       let status2 = wait_next_event [ Button_up ] in
