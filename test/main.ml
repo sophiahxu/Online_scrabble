@@ -6,6 +6,24 @@ open Bag
 
 let id x = x
 
+(** [pp_string s] pretty-prints string [s]. *)
+let pp_string s = "\"" ^ s ^ "\""
+
+(** [pp_list pp_elt lst] pretty-prints list [lst], using [pp_elt] to
+    pretty-print each element of [lst]. *)
+let pp_list pp_elt lst =
+  let pp_elts lst =
+    let rec loop n acc = function
+      | [] -> acc
+      | [ h ] -> acc ^ pp_elt h
+      | h1 :: (h2 :: t as t') ->
+          if n = 100 then acc ^ "..." (* stop printing long list *)
+          else loop (n + 1) (acc ^ pp_elt h1 ^ "; ") t'
+    in
+    loop 0 "" lst
+  in
+  "[" ^ pp_elts lst ^ "]"
+
 exception NotFoundError
 
 (**[string_of_int_option] is the string of int option [x].*)
@@ -49,11 +67,23 @@ let letter_test name expected_output t =
   name >:: fun _ ->
   assert_equal expected_output (Board.letter t) ~printer:id
 
+(**[clicked_test name expected_output x y board] constructs an OUnit
+   test named [name] that asserts the quality of [expected_output] with
+   location [x], [y] on board [board]*)
 let clicked_test name expected_output x y board =
   name >:: fun _ ->
   assert_equal expected_output
     (Board.clicked x y board)
     ~printer:string_of_bool
+
+(**[memory_stack_test name expected_output board] constructs an OUnit
+   test named [name] that asserts the quality of [expected_output] with
+   board [b]. *)
+let memory_stack_test name expected_output b =
+  name >:: fun _ ->
+  assert_equal expected_output
+    (List.map Board.letter (Board.memory_stack b))
+    ~printer:(pp_list pp_string)
 
 let board = Board.init ()
 
@@ -65,7 +95,9 @@ let fortyfifth_tile = List.nth tile_list 45
 
 let last_tile = List.nth tile_list (List.length tile_list - 1)
 
-let board2 = Board.add_tile 700 600 "A" board
+let board2 = Board.add_tile 435 155 "A" board
+
+let board3 = Board.add_tile 500 500 "B" board2
 
 let board_tests =
   [
@@ -98,16 +130,27 @@ let board_tests =
     letter_test "First element of tile list has letter empty string" ""
       first_tile;
     clicked_test "0, 0 is not on the board" false 0 0 board;
-    clicked_test "600, 400 is on the board" true 600 400 board;
+    clicked_test "435, 155 is on the board" true 435 155 board;
     clicked_test
-      "700, 600 is not on the board after a tile has been added \n\
-      \    there" false 400 400 board2;
+      "435, 155 is not on the board after a tile has been added \n\
+      \    there" false 435 155 board2;
     clicked_test
-      "500, 300 is on the board after a tile has been added at 700, 600"
+      "500, 300 is on the board after a tile has been added at 435, 155"
       true 500 300 board2;
     clicked_test
-      "405, 123 is on the board after a tile has beena dded at 700, 600"
+      "405, 123 is on the board after a tile has beena dded at 435, 155"
       true 405 123 board2;
+    memory_stack_test "New board has empty memory stack " [] board;
+    memory_stack_test "Board with tile 'A' has memory stack with 'A'"
+      [ "A" ] board2;
+    memory_stack_test
+      "Board with tiles 'A' and 'B' has memory stack with 'A' and 'B'"
+      [ "B"; "A" ] board3;
+    memory_stack_test
+      "Board with tiles 'A' and 'B' with undo has memory stack with 'A'"
+      [ "A" ] (Board.undo board3);
+    memory_stack_test "Board with undo all has empty memory stack" []
+      (Board.undo_all board3);
   ]
 
 (**[player_points name expected_output player] constructs an OUnit test

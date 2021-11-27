@@ -34,6 +34,10 @@ val letter : t -> string
 val turn : t -> bool
 (**[turn a] is whether or not the tile was placed on the current turn.*)
 
+val memory_stack : b -> t list
+(**[memory_stack a] is the list of tiles that were placed on the current
+   turn for board [b]*)
+
 val clicked : int -> int -> b -> bool
 (**[clicked x y] is whether or not the dimension *)
 
@@ -46,3 +50,8 @@ val add_tile : int -> int -> string -> b -> b
 val undo : b -> b
 (**[undo board] is [board] with the latest tile placement undone. If
    there have been no new placements yet this turn, no changes are made.*)
+
+val undo_all : b -> b
+(**[undo_all board] is [board] with all the tiles placed during the
+   current player's turn removed. If there have been no new placements
+   yet this turn, no changes are made. *)

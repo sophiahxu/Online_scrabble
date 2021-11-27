@@ -17,6 +17,7 @@ type t = {
 
 type b = {
   side : int;
+  memory_stack : t list;
   tiles : t list;
 }
 
@@ -156,6 +157,7 @@ let init () =
   let start_y = 120 in
   {
     side = 32;
+    memory_stack = [];
     tiles = tile_setup 32 15 start_x start_y 1 1 |> tile_bonus;
   }
 
@@ -187,6 +189,8 @@ let letter tile =
   | None -> ""
 
 let turn tile = tile.turn
+
+let memory_stack b = b.memory_stack
 
 (**[color_grid tiles side] adds color to the rectangles as described by
    [tiles] by using the colors and locations in this list. Each
@@ -235,7 +239,7 @@ let draw board =
   grid (tiles board) (side board);
   letter_grid (tiles board)
 
-(**[location x y tiles side] is the tile from the list [tiles] that
+(**[find_tile x y tiles side] is the tile from the list [tiles] that
    houses the coordinates [x], [y], where each of these tiles has the
    side length [side]. Requires: [side] is the side length of the tiles.
    [x], [y] >= 0. [tiles] is a valid list of tiles.*)
@@ -256,18 +260,55 @@ let clicked x y board =
   | None -> false
   | Some x -> letter x = ""
 
+(**[replace_tile tiles n new_letter placed] is the list of [tiles] where
+   the tile with the name [n] now contains the letter [new_letter], and
+   the field of turn has been updated accordingly. *)
 let rec replace_tile tiles n new_letter =
   match tiles with
   | [] -> []
   | h :: t when h.name = n ->
-      { h with letter = Some new_letter; turn = true } :: t
+      if new_letter = None then
+        { h with letter = new_letter; turn = false } :: t
+      else { h with letter = new_letter; turn = true } :: t
   | h :: t -> h :: replace_tile t n new_letter
 
-let add_tile x y letter board =
+let add_tile x y l board =
   let tile = find_tile x y (tiles board) (side board) in
   match tile with
   | None -> board
   | Some z ->
-      { board with tiles = replace_tile (tiles board) (name z) letter }
+      {
+        board with
+        memory_stack = { z with letter = Some l } :: board.memory_stack;
+        tiles = replace_tile (tiles board) (name z) (Some l);
+      }
 
-let undo board = failwith "unimplemented"
+let undo board =
+  match board.memory_stack with
+  | [] -> board
+  | h :: t ->
+      {
+        board with
+        memory_stack = t;
+        tiles = replace_tile board.tiles h.name None;
+      }
+
+let rec undo_all board =
+  match board.memory_stack with
+  | [] -> board
+  | h :: t -> undo_all (undo board)
+
+let rec words_in_list lst acc =
+  match lst with
+  | [] -> []
+  | h :: t ->
+      if h.letter != None then words_in_list t (h :: acc)
+      else if List.length acc != 0 then acc :: words_in_list t []
+      else words_in_list t acc
+
+let rec horizontal_words b acc =
+  match b.tiles with
+  | [] -> []
+  | h :: t ->
+      if List.length t mod 15 = 0 then words_in_list (h :: acc) []
+      else horizontal_words b (h :: acc)
