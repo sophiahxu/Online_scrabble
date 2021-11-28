@@ -10,6 +10,8 @@ type t = {
   name : string;
   point_total : int;
   player_tiles : player_tile list;
+  skip : bool;
+  memory_stack : string list
 }
 
 let add_points (p : t) points =
@@ -108,6 +110,8 @@ let init name =
         empty_tile6;
         empty_tile7;
       ];
+      skip = false;
+      memory_stack = []
   }
 
 (**[add_tile_list player_tiles letter] replaces an empty tile in
@@ -145,9 +149,21 @@ let rec remove_tile_helper player_tiles location =
       if x = lower_left location then { h with letter = "" } :: t
       else h :: remove_tile_helper t location
 
+(**[return letter player_tiles location] returns the tile letter at specified 
+[location] inside [player_tiles]*)
+let rec return_letter player_tiles location =
+  match player_tiles with
+  | [] -> ""
+  | h :: t ->
+      let x = x_location h in
+      if x = lower_left location then h.letter
+      else return_letter t location
+
 let remove_tile (p : t) x =
   let current_tiles = p.player_tiles in
-  { p with player_tiles = remove_tile_helper current_tiles x }
+  let p_letter = return_letter current_tiles x in
+  { p with player_tiles = remove_tile_helper current_tiles x;
+  memory_stack = p_letter :: p.memory_stack}
 
 (**[clicked_helper p x y] returns the tile at location [(x,y)] inside
    [p]*)
@@ -186,4 +202,6 @@ let next_turn p p_list =
   try next_turn_aux p_list with
   | Failure _ -> List.hd p_list
 
-let undo p = failwith "unimplemented"
+let undo p = match p.memory_stack with
+  | [] -> p
+  | h :: t -> let new_p = { p with memory_stack = t} in add_tile new_p h
