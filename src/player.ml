@@ -33,6 +33,8 @@ let rec num_tiles_helper (acc : int) (tiles : player_tile list) : int =
 
 let num_tiles (p : t) = num_tiles_helper 0 p.player_tiles
 
+(*[make_tile letter location side] makes a tile with [letter], [location], 
+  and [side]*)
 let make_tile letter location side = { letter; location; side }
 
 (*[x_location tile] returns the x coordinate of [tile]*)
@@ -202,6 +204,32 @@ let next_turn p p_list =
   try next_turn_aux p_list with
   | Failure _ -> List.hd p_list
 
+let get_skip p = p.skip
+
+let change_skip p = match p.skip with
+  | true -> {p with skip = false}
+  | false -> {p with skip = true}
+
 let undo p = match p.memory_stack with
   | [] -> p
   | h :: t -> let new_p = { p with memory_stack = t} in add_tile new_p h
+
+let rec undo_all p = match p.memory_stack with 
+  | [] -> p
+  | h :: t -> undo_all (undo p)
+
+let draw_box p status = let num = match p.name with
+| "Player 1" -> 1
+| "Player 2" -> 2
+| "Player 3" -> 3
+| _ -> 4 
+in if status = true then 
+set_color blue else set_color black;
+let x = 208 in 
+let y = (100 * (4 - num)) + 180 in
+draw_rect x y 160 90;
+moveto (x + 16) (y + 72);
+draw_string ("Player " ^ string_of_int num);
+moveto (x + 25) (y + 40);
+draw_string (string_of_int p.point_total)
+

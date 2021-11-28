@@ -50,3 +50,20 @@ val undo : t -> t
 (**[undo player] is [player] with it's latest tile placement undone. If
    the [player] has not made any moves yet this turn, no changes are
    made.*)
+
+val undo_all : t -> t
+(**[undo_all player] is [player] with all of it's tile placements
+   undone. If the [player] has not made any moves yet this turn, no
+   changes are made*)
+
+val get_skip : t -> bool
+(**[skip player] returns true if a player should be skipped, false if
+   not*)
+
+val change_skip : t -> t
+(**[change_skip player] makes [player] skippable if not already, and not
+   skippable if they already were*)
+
+val draw_box : t -> bool -> unit
+(**[draw_box player status] draws the name, box and points of [player]
+   in blue if [status] is true, and draws in black if [status] is false*)
