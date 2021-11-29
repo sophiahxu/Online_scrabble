@@ -15,6 +15,8 @@ let rec draw_rects num y =
     draw_rects (num - 1) y
 
 let start = 
+  set_color white;
+  fill_rect 30 30 140 565;
   set_color blue;
   draw_rect 30 30 140 565;
   moveto 50 575;
