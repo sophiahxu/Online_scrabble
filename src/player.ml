@@ -219,10 +219,10 @@ let rec undo_all p = match p.memory_stack with
   | h :: t -> undo_all (undo p)
 
 let draw_box p status = let num = match p.name with
-| "Player 1" -> 1
-| "Player 2" -> 2
-| "Player 3" -> 3
-| _ -> 4 
+  | "Player 1" -> 1
+  | "Player 2" -> 2
+  | "Player 3" -> 3
+  | _ -> 4 
 in if status = true then 
 set_color blue else set_color black;
 let x = 208 in 
