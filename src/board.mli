@@ -55,3 +55,6 @@ val undo_all : b -> b
 (**[undo_all board] is [board] with all the tiles placed during the
    current player's turn removed. If there have been no new placements
    yet this turn, no changes are made. *)
+
+val clear_mem : b -> b
+(**[clearn_mem board] is [board] with an empty memory stack.*)

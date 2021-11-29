@@ -308,6 +308,8 @@ let rec undo_all board =
   | [] -> board
   | h :: t -> undo_all (undo board)
 
+let clear_mem board = { board with memory_stack = []; removed = [] }
+
 let rec words_in_list lst acc =
   match lst with
   | [] -> []
