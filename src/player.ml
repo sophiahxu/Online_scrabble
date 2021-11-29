@@ -223,13 +223,15 @@ let draw_box p status = let num = match p.name with
   | "Player 2" -> 2
   | "Player 3" -> 3
   | _ -> 4 
-in if status = true then 
-set_color blue else set_color black;
-let x = 208 in 
-let y = (100 * (4 - num)) + 180 in
-draw_rect x y 160 90;
-moveto (x + 16) (y + 72);
-draw_string ("Player " ^ string_of_int num);
-moveto (x + 25) (y + 40);
-draw_string (string_of_int p.point_total)
+  in if status = true then 
+  set_color blue else set_color black;
+  let x = 208 in 
+  let y = (100 * (4 - num)) + 180 in
+  draw_rect x y 160 90;
+  moveto (x + 16) (y + 72);
+  draw_string ("Player " ^ string_of_int num);
+  moveto (x + 25) (y + 40);
+  draw_string (string_of_int p.point_total)
 
+let clear_mem p =   
+  {p with memory_stack = []}

@@ -56,6 +56,10 @@ val undo_all : t -> t
    undone. If the [player] has not made any moves yet this turn, no
    changes are made*)
 
+val clear_mem : t -> t
+(**[clear_mem player] will clear [player]'s memory at the start of a turn, 
+   so that player has no tiles placed on the board for that turn*)
+
 val get_skip : t -> bool
 (**[skip player] returns true if a player should be skipped, false if
    not*)
