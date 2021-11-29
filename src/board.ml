@@ -18,6 +18,7 @@ type t = {
 type b = {
   side : int;
   memory_stack : t list;
+  removed : t list;
   tiles : t list;
 }
 
@@ -158,6 +159,7 @@ let init () =
   {
     side = 32;
     memory_stack = [];
+    removed = [];
     tiles = tile_setup 32 15 start_x start_y 1 1 |> tile_bonus;
   }
 
@@ -191,6 +193,13 @@ let letter tile =
 let turn tile = tile.turn
 
 let memory_stack b = b.memory_stack
+
+let blank_tiles r side =
+  match r with
+  | [] -> ()
+  | h :: t ->
+      set_color white;
+      fill_rect (tile_x h) (tile_y h) side side
 
 (**[color_grid tiles side] adds color to the rectangles as described by
    [tiles] by using the colors and locations in this list. Each
@@ -231,10 +240,9 @@ let rec letter_grid tiles =
       letter_grid t
   | _ :: t -> letter_grid t
 
-(**[init_draw board] draws the initial board with the correct tile
-   colors.*)
 let draw board =
   color_grid (tiles board) (side board);
+  blank_tiles board.removed (side board);
   set_color black;
   grid (tiles board) (side board);
   letter_grid (tiles board)
@@ -280,6 +288,7 @@ let add_tile x y l board =
       {
         board with
         memory_stack = { z with letter = Some l } :: board.memory_stack;
+        removed = [];
         tiles = replace_tile (tiles board) (name z) (Some l);
       }
 
@@ -290,6 +299,7 @@ let undo board =
       {
         board with
         memory_stack = t;
+        removed = h :: board.removed;
         tiles = replace_tile board.tiles h.name None;
       }
 

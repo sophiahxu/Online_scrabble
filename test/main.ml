@@ -97,7 +97,9 @@ let last_tile = List.nth tile_list (List.length tile_list - 1)
 
 let board2 = Board.add_tile 435 155 "A" board
 
-let board3 = Board.add_tile 500 500 "B" board2
+let board3 = Board.add_tile 500 190 "B" board2
+
+let board4 = Board.add_tile 550 220 "C" board3
 
 let board_tests =
   [
@@ -138,7 +140,8 @@ let board_tests =
       "500, 300 is on the board after a tile has been added at 435, 155"
       true 500 300 board2;
     clicked_test
-      "405, 123 is on the board after a tile has beena dded at 435, 155"
+      "405, 123 is on the board after a tile has beena added at 435, \
+       155"
       true 405 123 board2;
     memory_stack_test "New board has empty memory stack " [] board;
     memory_stack_test "Board with tile 'A' has memory stack with 'A'"
@@ -147,8 +150,18 @@ let board_tests =
       "Board with tiles 'A' and 'B' has memory stack with 'A' and 'B'"
       [ "B"; "A" ] board3;
     memory_stack_test
+      "Board with tiles 'A', 'B', and 'C' has memory stack with \n\
+      \    'A', 'B', and 'C'" [ "C"; "B"; "A" ] board4;
+    memory_stack_test
+      "Board with tiles 'A', 'B' and 'C' with undo has memory stack \
+       with \n\
+      \    'A' and 'B'" [ "B"; "A" ] (Board.undo board4);
+    memory_stack_test
       "Board with tiles 'A' and 'B' with undo has memory stack with 'A'"
       [ "A" ] (Board.undo board3);
+    memory_stack_test
+      "Board with tiles 'A' with undo has empty memory stack" []
+      (Board.undo board2);
     memory_stack_test "Board with undo all has empty memory stack" []
       (Board.undo_all board3);
   ]
