@@ -119,7 +119,7 @@ let double_letter tile =
   let lst =
     [
       "a4";
-      "a11";
+      "a12";
       "c7";
       "c9";
       "d1";
@@ -241,8 +241,8 @@ let rec letter_grid tiles =
   | _ :: t -> letter_grid t
 
 let draw board =
-  color_grid (tiles board) (side board);
   blank_tiles board.removed (side board);
+  color_grid (tiles board) (side board);
   set_color black;
   grid (tiles board) (side board);
   letter_grid (tiles board)
@@ -322,3 +322,8 @@ let rec horizontal_words b acc =
   | h :: t ->
       if List.length t mod 15 = 0 then words_in_list (h :: acc) []
       else horizontal_words b (h :: acc)
+
+(*let vertical_words b row acc ready = match b.tiles with | [] -> [] | h
+  ::t -> if List.length acc = 15 then words_in_list (h :: acc) [] @
+  vertical_words b (Char.escaped Char.chr (row + 1)) [] false if
+  List.length acc =(String.sub (name h) 0 1 = row then *)
