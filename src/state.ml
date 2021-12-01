@@ -204,14 +204,27 @@ let draw (state : t) : unit =
 let init_draw state =
   draw_key ();
   player_boxes 800 625 4;
-  draw state
+  draw state;
+  let rec draw_boxes = function
+    | [] -> ()
+    | h :: t ->
+        Player.draw_box h false;
+        draw_boxes t
+  in
+  draw_boxes state.players;
+  Player.draw_box state.turn true
 
 let next_turn state =
+  Player.draw_box state.turn false;
+  let next = Player.next_turn state.turn state.players in
+  Player.draw_box next true;
   {
     state with
     mode = Draw;
     turn = Player.next_turn state.turn state.players;
-    players = Player.update_player state.turn state.players;
+    players =
+      Player.update_player (Player.clear_mem state.turn) state.players;
+    board = Board.clear_mem state.board;
   }
 
 let undo state =
