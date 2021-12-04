@@ -5,6 +5,11 @@ open Graphics
 
 exception NotFoundError
 
+type input =
+  | Clicked of int * int
+  | Enter
+  | Z
+
 type bonus =
   | Letter of int
   | Word of int  (** Represents the score bonuses for scrabble. *)
@@ -15,11 +20,14 @@ type key = {
 }
 (** Represents the scoring key for scrabble. *)
 
+(** Represents the input mode that the game is in. *)
 type mode =
   | Draw
   | Click
   | Point of int
-  | Challenge  (** Represents the input mode that the game is in. *)
+  | Init_challenge
+  | Challenge
+  | End_challenge
 
 type t = {
   mode : mode;
@@ -115,6 +123,9 @@ let letter_key letter number x y =
   draw_string (Printf.sprintf "%s - %s" letter number)
 
 let draw_key () =
+  set_color white;
+  fill_rect 30 30 140 565;
+  set_color black;
   draw_rect 30 30 140 565;
   moveto 50 575;
   draw_string "Key";
@@ -149,19 +160,8 @@ let draw_key () =
   letter_key "Y" "4" 50 70;
   letter_key "Z" "10" 50 55
 
-(**[player_boxes l h num] draws [num] player boxes depending on the
-   length [l] and height [h] of the entire board. Requires: [l], [h] >
-   0. 2 <= [num] <= 4.*)
-let rec player_boxes l h num =
-  if num = 0 then ()
-  else
-    let x = 208 in
-    let y = (100 * (4 - num)) + 180 in
-    draw_rect x y 160 90;
-    moveto (x + 16) (y + 72);
-    draw_string ("Player " ^ string_of_int num);
-    if num > 0 then player_boxes l h (num - 1)
-
+(**[click x y state] is an updated [state] depending on the location [x]
+   and [y] of where the mouse clicked.*)
 let click x y state =
   match state.mode with
   | Draw ->
@@ -192,19 +192,41 @@ let click x y state =
             Board.add_tile x y (Player.letter state.turn x0) state.board;
         }
       else { state with mode = Click }
+  | Init_challenge
+  | End_challenge ->
+      state
   | Challenge -> state
 
 let game_over state = state.game_over
 
-let draw (state : t) : unit =
-  Player.draw state.turn;
-  Bag.draw state.bag;
-  Board.draw state.board
+let draw (state : t) (inpt_op : input option) : unit =
+  match state.mode with
+  | Draw
+  | Click
+  | Point _ -> (
+      match inpt_op with
+      | None -> ()
+      | Some _ ->
+          Player.draw state.turn;
+          Bag.draw state.bag;
+          Board.draw state.board)
+  | Init_challenge -> ()
+  | End_challenge ->
+      draw_key ();
+      let rec draw_boxes = function
+        | [] -> ()
+        | h :: t ->
+            Player.draw_box h false;
+            draw_boxes t
+      in
+      draw_boxes state.players;
+      Player.draw_box state.turn true;
+      Player.draw state.turn
+  | Challenge -> ()
 
 let init_draw state =
   draw_key ();
-  player_boxes 800 625 4;
-  draw state;
+  draw state (Some Enter);
   let rec draw_boxes = function
     | [] -> ()
     | h :: t ->
@@ -214,22 +236,39 @@ let init_draw state =
   draw_boxes state.players;
   Player.draw_box state.turn true
 
+(**[next_turn state] is [state] updated to be the next player's turn.*)
 let next_turn state =
-  Player.draw_box state.turn false;
-  let next = Player.next_turn state.turn state.players in
-  Player.draw_box next true;
   {
     state with
-    mode = Draw;
     turn = Player.next_turn state.turn state.players;
     players =
       Player.update_player (Player.clear_mem state.turn) state.players;
     board = Board.clear_mem state.board;
   }
 
+(**[undo state] is an updated [state] with the most recent tile
+   placement of the current player undone.*)
 let undo state =
   {
     state with
     turn = Player.undo state.turn;
     board = Board.undo state.board;
   }
+
+let update inpt_op state =
+  match state.mode with
+  | Init_challenge -> { state with mode = Challenge }
+  | End_challenge -> { state with mode = Draw }
+  | Draw
+  | Click
+  | Point _ -> (
+      match inpt_op with
+      | None -> state
+      | Some inpt -> (
+          match inpt with
+          | Clicked (x, y) -> click x y state
+          | Enter -> { state with mode = Init_challenge }
+          | Z -> undo state))
+  | Challenge -> next_turn { state with mode = End_challenge }
+(*(match inpt_op with | None -> state | Some inpt -> ( match inpt with |
+  Clicked (x, y) -> click x y state | _ -> state))*)

@@ -1,3 +1,9 @@
+(**[input] represents GUI player input.*)
+type input =
+  | Clicked of int * int
+  | Enter
+  | Z
+
 type t
 (**[info] represents the scrabble game state*)
 
@@ -8,20 +14,14 @@ val init : unit -> t
 val init_draw : t -> unit
 (**[init_draw state] draws the initial state of the game.*)
 
-val click : int -> int -> t -> t
-(**[click x y state] is an updated [state] depending on the location [x]
-   and [y] of where the mouse clicked.*)
+val update : input option -> t -> t
+(**[update input state] is an updated [state] depending on the GUI
+   [input] given.*)
 
-val draw : t -> unit
-(**[draw state] draws all of the current scrabble game components in
-   [state] to the GUI.*)
+val draw : t -> input option -> unit
+(**[draw state input] draws all of the current scrabble game components
+   in [state] to the GUI depending on [state] and whether there is
+   [input].*)
 
 val game_over : t -> bool
 (**[game_over state] is true with the game is over, else it is false.*)
-
-val next_turn : t -> t
-(**[next_turn state] is [state] updated to be the next player's turn.*)
-
-val undo : t -> t
-(**[undo state] is an updated [state] with the most recent tile
-   placement of the current player undone.*)

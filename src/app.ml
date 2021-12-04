@@ -96,25 +96,26 @@ and active_update st =
   (* Terminate the active state when the game is over. *)
   if State.game_over st = true then update Loading_complete
   else
-    let status1 = wait_next_event [ Key_pressed; Button_down ] in
+    let status1 = wait_next_event [ Key_pressed; Button_down; Poll ] in
+
     (* Raise Exit when key pressed. *)
-    if status1.keypressed then
-      if status1.key = '\r' then (
-        State.draw (State.next_turn st);
-        active_update (State.next_turn st))
-      else if status1.key = '\027' then raise Exit
-      else if status1.key = 'z' then (
-        State.draw (State.undo st);
-        active_update (State.undo st))
-      else active_update st
-    else if status1.button then (
-      (* Wait for mouse to not be clicked to prevent double clicking. *)
-      let status2 = wait_next_event [ Button_up ] in
-      (* Update state according to where mouse clicked. *)
-      let state = State.click status2.mouse_x status2.mouse_y st in
-      (* Draw the updated state. *)
-      State.draw state;
-      (* Recurse on the updated state. *) active_update state)
+    let inpt =
+      if status1.keypressed then
+        match read_key () with
+        | '\027' -> raise Exit
+        | '\r' -> Some Enter
+        | 'z' -> Some Z
+        | _ -> None
+      else if status1.button then
+        (* Wait for mouse to not be clicked to prevent double
+           clicking. *)
+        let status2 = wait_next_event [ Button_up ] in
+        Some (Clicked (status2.mouse_x, status2.mouse_y))
+      else None
+    in
+    let s = State.update inpt st in
+    State.draw s inpt;
+    active_update s
 
 (**[loading_complete_update st] updates the game during game state
    [Loading_complete].*)
