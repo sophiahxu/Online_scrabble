@@ -160,11 +160,14 @@ let init_draw state =
 
 (**[next_turn state] is [state] updated to be the next player's turn.*)
 let next_turn state =
+  let turn_final =
+    state.turn |> Player.clear_mem
+    (* |> Player.add_points (Board.score state.board) *)
+  in
   {
     state with
     turn = Player.next_turn state.turn state.players;
-    players =
-      Player.update_player (Player.clear_mem state.turn) state.players;
+    players = Player.update_player turn_final state.players;
     board = Board.clear_mem state.board;
   }
 
@@ -192,5 +195,3 @@ let update inpt_op state =
           | Enter -> { state with mode = Init_challenge }
           | Z -> undo state))
   | Challenge -> next_turn { state with mode = End_challenge }
-(*(match inpt_op with | None -> state | Some inpt -> ( match inpt with |
-  Clicked (x, y) -> click x y state | _ -> state))*)

@@ -308,6 +308,8 @@ let rec words_in_list lst acc =
       else if List.length acc != 0 then acc :: words_in_list t []
       else words_in_list t acc
 
+(**[horizontal_words board acc] adds the horizontal words in [board] to
+   [acc] *)
 let rec horizontal_words b acc =
   match b.tiles with
   | [] -> []
@@ -315,7 +317,50 @@ let rec horizontal_words b acc =
       if List.length t mod 15 = 0 then words_in_list (h :: acc) []
       else horizontal_words b (h :: acc)
 
-(*let vertical_words b row acc ready = match b.tiles with | [] -> [] | h
-  ::t -> if List.length acc = 15 then words_in_list (h :: acc) [] @
-  vertical_words b (Char.escaped Char.chr (row + 1)) [] false if
-  List.length acc =(String.sub (name h) 0 1 = row then *)
+(**[vertical_words board row acc ready] adds the vertical words in
+   [board] to [acc] *)
+let vertical_words b row acc ready = failwith "unimplemented"
+(*TODO: Grace*)
+
+(*match b.tiles with | [] -> [] | h ::t -> if List.length acc = 15 then
+  words_in_list (h :: acc) [] @ vertical_words b (Char.escaped Char.chr
+  (row + 1)) [] false if List.length acc =(String.sub (name h) 0 1 = row
+  then *)
+
+(**[filter_placed lst] is [lst] but with only the words that contain a
+   tile that has been placed this turn.*)
+let filter_placed (lst : t list list) : t list list =
+  failwith "unimplemented"
+(*TODO: Grace*)
+
+(**[letter_score word] is the score obtained from [word] disregarding
+   word bonuses.*)
+let rec letter_score (word : t list) : int =
+  match word with
+  | [] -> 0
+  | h :: t ->
+      let mult =
+        match h.bonus with
+        | TripleLetter -> 3
+        | DoubleLetter -> 2
+        | _ -> 1
+      in
+      let letter_value =
+        List.assoc
+          (match h.letter with
+          | None -> failwith "Somethin' ain't right"
+          | Some l -> l)
+          key.letters
+      in
+      (mult * letter_value) + letter_score t
+
+(**[word_score word] is the score obtained from [word].*)
+let word_score (word : t list) : int = failwith "unimplemented"
+(*TODO: Sophia, call letter_score as a helper*)
+
+let score b =
+  let words_list =
+    horizontal_words b [] @ vertical_words b 1 [] false
+  in
+  words_list |> filter_placed
+  |> List.fold_left (fun acc word -> acc + word_score word) 0

@@ -5,8 +5,8 @@ val init : string -> t
 (**[init s] initializes a player with name [s], who starts with zero
    points and seven empty tiles*)
 
-val add_points : t -> int -> t
-(**[add_points p pt] adds [pt] points to player [p]*)
+val add_points : int -> t -> t
+(**[add_points pt p] adds [pt] points to player [p]*)
 
 val player_name : t -> string
 (**[player_name p] returns the name of player [p]*)
@@ -57,8 +57,8 @@ val undo_all : t -> t
    changes are made*)
 
 val clear_mem : t -> t
-(**[clear_mem player] will clear [player]'s memory at the start of a turn, 
-   so that player has no tiles placed on the board for that turn*)
+(**[clear_mem player] will clear [player]'s memory at the start of a
+   turn, so that player has no tiles placed on the board for that turn*)
 
 val get_skip : t -> bool
 (**[skip player] returns true if a player should be skipped, false if

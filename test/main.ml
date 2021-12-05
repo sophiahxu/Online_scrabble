@@ -202,7 +202,7 @@ let player = Player.init "Player 1"
 
 let empty_player = Player.init ""
 
-let player2 = add_points player 10
+let player2 = add_points 10 player
 
 let player1t = add_tile player2 "A"
 

@@ -14,7 +14,7 @@ type t = {
   memory_stack : string list;
 }
 
-let add_points (p : t) points =
+let add_points points (p : t) =
   let original = p.point_total in
   { p with point_total = original + points }
 

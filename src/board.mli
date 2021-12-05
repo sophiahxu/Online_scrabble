@@ -58,3 +58,7 @@ val undo_all : b -> b
 
 val clear_mem : b -> b
 (**[clearn_mem board] is [board] with an empty memory stack.*)
+
+val score : b -> int
+(**[score board] tallies up the score according to [board] for this
+   turn.*)
