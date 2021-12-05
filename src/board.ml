@@ -31,12 +31,13 @@ type key = {
 
 (** [key] represents the scrabble scoring key. *)
 let key : key =
-  let assoc1 (k, v) = (k, to_assoc v) in
-  let assoc2 (k, v) = (k, to_string v) in
   let key_assoc =
     Yojson.Basic.from_file "data/key.json"
-    |> to_assoc |> List.map assoc1
-    |> List.map (fun (k, v) -> (k, List.map assoc2 v))
+    |> to_assoc
+    |> List.map (fun (k, v) ->
+           ( k,
+             v |> to_assoc |> List.map (fun (k, v) -> (k, to_string v))
+           ))
   in
   {
     colors =
