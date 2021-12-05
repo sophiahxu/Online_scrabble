@@ -1,7 +1,5 @@
-open Board
-open Player
-open Bag
 open Graphics
+open Yojson.Basic.Util
 
 exception NotFoundError
 
@@ -9,16 +7,6 @@ type input =
   | Clicked of int * int
   | Enter
   | Z
-
-type bonus =
-  | Letter of int
-  | Word of int  (** Represents the score bonuses for scrabble. *)
-
-type key = {
-  color : (int * bonus) list;
-  letter : (string * int) list;
-}
-(** Represents the scoring key for scrabble. *)
 
 (** Represents the input mode that the game is in. *)
 type mode =
@@ -32,8 +20,6 @@ type mode =
 type t = {
   mode : mode;
   (* description of the current state of the game. *)
-  key : key;
-  (* scrabble scoring key *)
   board : Board.b;
   (* scrabble board *)
   bag : Bag.t;
@@ -44,47 +30,6 @@ type t = {
   (* player whose turn it is currently *)
   game_over : bool; (* whether the game is over *)
 }
-
-(** [init_key () is the scrabble scoring key] *)
-let init_key () =
-  {
-    color =
-      [
-        (0xFF0000, Word 3);
-        (0x0000FF, Letter 3);
-        (0xE88282, Word 2);
-        (0x8282E8, Letter 2);
-      ];
-    letter =
-      [
-        ("A", 1);
-        ("B", 3);
-        ("C", 3);
-        ("D", 3);
-        ("E", 1);
-        ("F", 4);
-        ("G", 2);
-        ("H", 4);
-        ("I", 1);
-        ("J", 8);
-        ("K", 5);
-        ("L", 1);
-        ("M", 3);
-        ("N", 1);
-        ("O", 1);
-        ("P", 3);
-        ("Q", 10);
-        ("R", 1);
-        ("S", 1);
-        ("T", 1);
-        ("U", 1);
-        ("V", 4);
-        ("W", 4);
-        ("X", 8);
-        ("Y", 4);
-        ("Z", 10);
-      ];
-  }
 
 let init () =
   let players =
@@ -100,7 +45,6 @@ let init () =
     board = Board.init ();
     players;
     bag = Bag.init ();
-    key = init_key ();
     turn = List.hd players;
     game_over = false;
   }
@@ -133,32 +77,10 @@ let draw_key () =
   color_key 0x0000FF " -3x Letter" 50 510 25 25;
   color_key 0xE88282 " -2x Word" 50 480 25 25;
   color_key 0x8282E8 " -2x Letter" 50 450 25 25;
-  letter_key "A" "1" 50 430;
-  letter_key "B" "3" 50 415;
-  letter_key "C" "3" 50 400;
-  letter_key "D" "2" 50 385;
-  letter_key "E" "1" 50 370;
-  letter_key "F" "4" 50 355;
-  letter_key "G" "2" 50 340;
-  letter_key "H" "4" 50 325;
-  letter_key "I" "1" 50 310;
-  letter_key "J" "8" 50 295;
-  letter_key "K" "5" 50 280;
-  letter_key "L" "1" 50 265;
-  letter_key "M" "3" 50 250;
-  letter_key "N" "1" 50 235;
-  letter_key "Q" "10" 50 220;
-  letter_key "R" "1" 50 205;
-  letter_key "U" "1" 50 190;
-  letter_key "V" "4" 50 175;
-  letter_key "O" "1" 50 160;
-  letter_key "P" "3" 50 145;
-  letter_key "S" "1" 50 130;
-  letter_key "T" "1" 50 115;
-  letter_key "W" "4" 50 100;
-  letter_key "X" "8" 50 85;
-  letter_key "Y" "4" 50 70;
-  letter_key "Z" "10" 50 55
+  Yojson.Basic.from_file "data/key.json"
+  |> to_assoc |> List.assoc "letters" |> to_assoc
+  |> List.map (fun (k, v) -> (k, to_string v))
+  |> List.iteri (fun i (l, num) -> letter_key l num 50 (430 - (i * 15)))
 
 (**[click x y state] is an updated [state] depending on the location [x]
    and [y] of where the mouse clicked.*)

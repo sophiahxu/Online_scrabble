@@ -1,4 +1,5 @@
 open Graphics
+open Yojson.Basic.Util
 
 type bonus_type =
   | TripleWord
@@ -21,6 +22,37 @@ type b = {
   removed : t list;
   tiles : t list;
 }
+
+type key = {
+  colors : (int * bonus_type) list;
+  letters : (string * int) list;
+}
+(** Represents the scoring key for scrabble. *)
+
+(** [key] represents the scrabble scoring key. *)
+let key : key =
+  let assoc1 (k, v) = (k, to_assoc v) in
+  let assoc2 (k, v) = (k, to_string v) in
+  let key_assoc =
+    Yojson.Basic.from_file "data/key.json"
+    |> to_assoc |> List.map assoc1
+    |> List.map (fun (k, v) -> (k, List.map assoc2 v))
+  in
+  {
+    colors =
+      List.assoc "colors" key_assoc
+      |> List.map (fun (k, v) ->
+             ( int_of_string k,
+               match v with
+               | "TripleWord" -> TripleWord
+               | "TripleLetter" -> TripleLetter
+               | "DoubleWord" -> DoubleWord
+               | "DoubleLetter" -> DoubleLetter
+               | _ -> failwith "invalid input" ));
+    letters =
+      List.assoc "letters" key_assoc
+      |> List.map (fun (k, v) -> (k, int_of_string v));
+  }
 
 (**[tile_row_setup s num x y row col] is a list of a row of [num] tiles
    that have a lower left corner at [x] [y]. Each tile has a name
@@ -56,7 +88,12 @@ let rec tile_setup s num x y row col =
    given the correct TripleWord bonus value. Requires: [tile] is a valid
    list of tiles.*)
 let triple_word tile =
-  let lst = [ "a1"; "a8"; "a15"; "h1"; "h15"; "o1"; "o8"; "o15" ] in
+  let lst =
+    Yojson.Basic.from_file "data/board.json"
+    |> to_assoc
+    |> List.assoc "triple_word"
+    |> to_list |> List.map to_string
+  in
   if List.mem tile.name lst then { tile with bonus = TripleWord }
   else tile
 
@@ -65,20 +102,10 @@ let triple_word tile =
    valid list of tiles.*)
 let triple_letter tile =
   let lst =
-    [
-      "b6";
-      "b10";
-      "f2";
-      "f6";
-      "f10";
-      "f14";
-      "j2";
-      "j6";
-      "j10";
-      "j14";
-      "n6";
-      "n10";
-    ]
+    Yojson.Basic.from_file "data/board.json"
+    |> to_assoc
+    |> List.assoc "triple_letter"
+    |> to_list |> List.map to_string
   in
   if List.mem tile.name lst then { tile with bonus = TripleLetter }
   else tile
@@ -88,26 +115,10 @@ let triple_letter tile =
    list of tiles.*)
 let double_word tile =
   let lst =
-    [
-      "b2";
-      "b14";
-      "c3";
-      "c13";
-      "d4";
-      "d12";
-      "e5";
-      "e11";
-      "h8";
-      "k5";
-      "k5";
-      "k11";
-      "l4";
-      "l12";
-      "m3";
-      "m13";
-      "n2";
-      "n14";
-    ]
+    Yojson.Basic.from_file "data/board.json"
+    |> to_assoc
+    |> List.assoc "double_word"
+    |> to_list |> List.map to_string
   in
   if List.mem tile.name lst then { tile with bonus = DoubleWord }
   else tile
@@ -117,32 +128,10 @@ let double_word tile =
    valid list of tiles.*)
 let double_letter tile =
   let lst =
-    [
-      "a4";
-      "a12";
-      "c7";
-      "c9";
-      "d1";
-      "d8";
-      "d15";
-      "g3";
-      "g7";
-      "g9";
-      "g13";
-      "h4";
-      "h12";
-      "i3";
-      "i7";
-      "i9";
-      "i13";
-      "l1";
-      "l8";
-      "l15";
-      "m7";
-      "m9";
-      "o4";
-      "o12";
-    ]
+    Yojson.Basic.from_file "data/board.json"
+    |> to_assoc
+    |> List.assoc "double_letter"
+    |> to_list |> List.map to_string
   in
   if List.mem tile.name lst then { tile with bonus = DoubleLetter }
   else tile
