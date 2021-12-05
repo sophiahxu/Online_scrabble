@@ -16,7 +16,7 @@ zip:
 	rm -f scrabble.zip
 	zip -r scrabble.zip . -x@exclude.lst
 
-doc:
+docs:
 	dune build @doc
 
 clean:
