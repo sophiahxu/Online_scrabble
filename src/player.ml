@@ -234,10 +234,13 @@ let draw_box p status =
     | "Player 3" -> 3
     | _ -> 4
   in
-  if status = true then set_color blue else set_color black;
+  if status = true then set_color 0xD3F2F6 else set_color white;
   let x = 208 in
   let y = (100 * (4 - num)) + 180 in
+  fill_rect x y 160 90;
+  if status = true then set_color blue else set_color black;
   draw_rect x y 160 90;
+  if status = true then set_color blue else set_color black;
   moveto (x + 16) (y + 72);
   draw_string ("Player " ^ string_of_int num);
   moveto (x + 25) (y + 40);

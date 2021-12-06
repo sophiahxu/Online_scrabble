@@ -355,8 +355,18 @@ let rec letter_score (word : t list) : int =
       (mult * letter_value) + letter_score t
 
 (**[word_score word] is the score obtained from [word].*)
-let word_score (word : t list) : int = failwith "unimplemented"
-(*TODO: Sophia, call letter_score as a helper*)
+let rec word_score (word : t list) : int =
+  let current_score = letter_score word in
+  match word with
+  | [] -> 0
+  | h :: t ->
+      let mult =
+        match h.bonus with
+        | TripleWord -> 3
+        | DoubleWord -> 2
+        | _ -> 1
+      in
+      (mult * current_score) + word_score t
 
 let score b =
   let words_list =
