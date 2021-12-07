@@ -4,6 +4,27 @@ open Board
 open Player
 open Bag
 
+(**Test Plan: We tested functions for the board, player, and bag
+   modules. These files contained a lot of the back-end structure for
+   our scrabble game, and thus contained functions suitable for OUnit
+   testing. Functions in state and app involved work with the graphics
+   gui, and thus didn't have functions compatible with OUnit. Thus, in
+   testing the front end of our game, the team did extensive manual
+   testing, by playing scrabble on the actual gui. We did our best to
+   think of edge cases, such as switching players and then trying to
+   undo the previous player's work. Hanna also counted out each letter
+   tile, to ensure that there were the correct number of each letter
+   displayed, and that only 98 tiles could be drawn. We also tried using
+   our scrabble gui for extended periods of time, placing down different
+   words, in order to ensure that no major issues would occur down the
+   line. For Board, (TODO: Grace). For Player, the key information that
+   needed to be maintained was the number of tiles of each player, and
+   ensuring tiles were replaced/removed correctly. Black box testing was
+   used, as player's with no tiles, and full tiles were tested according
+   to the specifications. To ensure that the number of tiles would
+   always be maintained correctly, we tested removing and adding tiles
+   individually, from a full to an empty player board, and vice versa.
+   For Bag, (TODO).*)
 let id x = x
 
 (** [pp_string s] pretty-prints string [s]. *)
