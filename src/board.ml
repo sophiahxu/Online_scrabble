@@ -298,40 +298,52 @@ let rec undo_all board =
   | [] -> board
   | h :: t -> undo_all (undo board)
 
-let clear_mem board = { board with memory_stack = []; removed = [] }
+let rec clear_tiles = function 
+| [] -> [] 
+| h :: t -> {h with turn = false} :: clear_tiles t
+
+let clear_mem board = { board with tiles = clear_tiles board.tiles; memory_stack = []; removed = [] }
 
 let rec words_in_list lst acc =
   match lst with
   | [] -> []
   | h :: t ->
       if h.letter != None then words_in_list t (h :: acc)
-      else if List.length acc != 0 then acc :: words_in_list t []
+      else if List.length acc > 1 then acc :: words_in_list t []
       else words_in_list t acc
 
-(**[horizontal_words board acc] adds the horizontal words in [board] to
-   [acc] *)
-let rec horizontal_words b acc =
-  match b.tiles with
-  | [] -> []
-  | h :: t ->
-      if List.length t mod 15 = 0 then words_in_list (h :: acc) []
-      else horizontal_words b (h :: acc)
+(**[horizontal_words board acc] is a list of the horizontal words in [b] *)
+let rec horizontal_words b num =
+  if (num <=15) then 
+    let row = b.tiles |> List.filter (fun x -> String.contains (x.name) 
+    (Char.chr (num + 96))) in 
+    let words = words_in_list row [] in 
+    words @ horizontal_words b (num + 1)
+else [] 
 
-(**[vertical_words board row acc ready] adds the vertical words in
-   [board] to [acc] *)
-let vertical_words b row acc ready = failwith "unimplemented"
-(*TODO: Grace*)
+(**[vertical_words board row acc] creates the list of words in the vertical [row] in 
+[board] and appends it onto the [acc].*)
+let rec vertical_words b num  = 
+  if (num <= 15) then 
+    let column = b.tiles |> List.filter (fun x -> String.sub (x.name) 1 
+    (String.length x.name - 1)
+    = (string_of_int num)) in 
+    let words =  words_in_list column [] in
+    words @ vertical_words b (num + 1)
+  else []
 
-(*match b.tiles with | [] -> [] | h ::t -> if List.length acc = 15 then
-  words_in_list (h :: acc) [] @ vertical_words b (Char.escaped Char.chr
-  (row + 1)) [] false if List.length acc =(String.sub (name h) 0 1 = row
-  then *)
+  (**[placed_check tiles] checks whether or not there is a tile in [tiles] 
+  that has been placed during this turn.*)
+let rec placed_check tiles = 
+  match tiles with 
+  | [] -> false 
+  | h :: t when (turn h) -> true 
+  | h :: t -> placed_check t 
 
 (**[filter_placed lst] is [lst] but with only the words that contain a
    tile that has been placed this turn.*)
-let filter_placed (lst : t list list) : t list list =
-  failwith "unimplemented"
-(*TODO: Grace*)
+let rec filter_placed (lst : t list list) : t list list =
+  List.filter (fun x -> placed_check x) lst
 
 (**[letter_score word] is the score obtained from [word] disregarding
    word bonuses.*)
@@ -352,25 +364,29 @@ let rec letter_score (word : t list) : int =
           | Some l -> l)
           key.letters
       in
-      (mult * letter_value) + letter_score t
+      if h.turn then 
+      (mult * letter_value) + letter_score t else letter_value + letter_score t
 
 (**[word_score word] is the score obtained from [word].*)
 let rec word_score (word : t list) : int =
   let current_score = letter_score word in
-  match word with
-  | [] -> 0
-  | h :: t ->
-      let mult =
-        match h.bonus with
-        | TripleWord -> 3
-        | DoubleWord -> 2
-        | _ -> 1
-      in
-      (mult * current_score) + word_score t
+  let rec multiplier w = 
+    match w with
+    | [] -> 1
+    | h :: t ->
+        let mult =
+          match h.bonus with
+          | TripleWord -> 3
+          | DoubleWord -> 2
+          | _ -> 1
+        in
+        if h.turn then (mult * multiplier t) else multiplier t
+      in 
+    (( multiplier word) *  current_score) 
 
 let score b =
   let words_list =
-    horizontal_words b [] @ vertical_words b 1 [] false
+    horizontal_words b 1 @ (vertical_words b 1) 
   in
-  words_list |> filter_placed
-  |> List.fold_left (fun acc word -> acc + word_score word) 0
+   words_list |> filter_placed 
+   |> List.fold_left (fun acc word -> acc + word_score word) 0

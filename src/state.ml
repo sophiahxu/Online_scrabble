@@ -162,7 +162,7 @@ let init_draw state =
 let next_turn state =
   let turn_final =
     state.turn |> Player.clear_mem
-    (* |> Player.add_points (Board.score state.board) *)
+    |> Player.add_points (Board.score state.board) 
   in
   {
     state with
