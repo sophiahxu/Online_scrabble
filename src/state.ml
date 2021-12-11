@@ -13,9 +13,11 @@ type mode =
   | Draw
   | Click
   | Point of int
+  | Init_challenge_query
+  | Challenge_query
   | Init_challenge
   | Challenge
-  | End_challenge
+  | Init_next_turn
 
 type t = {
   mode : mode;
@@ -28,6 +30,8 @@ type t = {
   (* list of players *)
   turn : Player.t;
   (* player whose turn it is currently *)
+  challenge : Challenge.t option;
+  (* scrabble challenge *)
   game_over : bool; (* whether the game is over *)
 }
 
@@ -47,6 +51,7 @@ let init () =
     bag = Bag.init ();
     turn = List.hd players;
     game_over = false;
+    challenge = None;
   }
 
 (**[color_key color phrase x y w h] draws a rectangle with lower left
@@ -82,6 +87,19 @@ let draw_key () =
   |> List.map (fun (k, v) -> (k, to_string v))
   |> List.iteri (fun i (l, num) -> letter_key l num 50 (430 - (i * 15)))
 
+(**[next_turn state] is [state] updated to be the next player's turn.*)
+let next_turn state =
+  let turn_final =
+    state.turn |> Player.clear_mem
+    |> Player.add_points (Board.score state.board)
+  in
+  {
+    state with
+    turn = Player.next_turn state.turn state.players;
+    players = Player.update_player turn_final state.players;
+    board = Board.clear_mem state.board;
+  }
+
 (**[click x y state] is an updated [state] depending on the location [x]
    and [y] of where the mouse clicked.*)
 let click x y state =
@@ -114,12 +132,47 @@ let click x y state =
             Board.add_tile x y (Player.letter state.turn x0) state.board;
         }
       else { state with mode = Click }
+  | Challenge_query ->
+      if x > 550 && x < 630 && y > 40 && y < 70 then
+        {
+          state with
+          mode = Init_challenge;
+          challenge = Some (Challenge.init ());
+        }
+      else if x > 650 && x < 730 && y > 40 && y < 70 then
+        next_turn { state with mode = Init_next_turn }
+      else state
+  | Init_challenge_query
   | Init_challenge
-  | End_challenge ->
+  | Init_next_turn ->
       state
-  | Challenge -> state
+  | Challenge ->
+      let c =
+        match state.challenge with
+        | Some c -> c
+        | None -> failwith "this shouldn't happen"
+      in
+      if Challenge.finished c then
+        next_turn { state with challenge = None; mode = Init_next_turn }
+        (*TODO: update so that we either clear the current turn and skip
+          the current player's next turn or we just skip loser's next
+          turn*)
+      else { state with challenge = Some (Challenge.click x y c) }
 
 let game_over state = state.game_over
+
+(**[challenge_query_draw ()] draws the challenge button and the continue
+   button.*)
+let challenge_query_draw () =
+  set_color white;
+  fill_rect 450 25 380 60;
+  set_color black;
+  draw_rect 550 40 80 30;
+  draw_rect 650 40 80 30;
+  moveto 564 50;
+  draw_string "Challenge";
+  moveto 667 50;
+  draw_string "Continue"
 
 let draw (state : t) (inpt_op : input option) : unit =
   match state.mode with
@@ -132,8 +185,13 @@ let draw (state : t) (inpt_op : input option) : unit =
           Player.draw state.turn;
           Bag.draw state.bag;
           Board.draw state.board)
-  | Init_challenge -> ()
-  | End_challenge ->
+  | Init_challenge_query -> challenge_query_draw ()
+  | Challenge_query -> ()
+  | Init_challenge ->
+      set_color white;
+      fill_rect 25 25 150 575;
+      fill_rect 450 25 380 60
+  | Init_next_turn ->
       draw_key ();
       let rec draw_boxes = function
         | [] -> ()
@@ -144,7 +202,11 @@ let draw (state : t) (inpt_op : input option) : unit =
       draw_boxes state.players;
       Player.draw_box state.turn true;
       Player.draw state.turn
-  | Challenge -> ()
+  | Challenge ->
+      Challenge.draw
+        (match state.challenge with
+        | None -> failwith "this shouldn't happen"
+        | Some c -> c)
 
 let init_draw state =
   draw_key ();
@@ -158,19 +220,6 @@ let init_draw state =
   draw_boxes state.players;
   Player.draw_box state.turn true
 
-(**[next_turn state] is [state] updated to be the next player's turn.*)
-let next_turn state =
-  let turn_final =
-    state.turn |> Player.clear_mem
-    |> Player.add_points (Board.score state.board) 
-  in
-  {
-    state with
-    turn = Player.next_turn state.turn state.players;
-    players = Player.update_player turn_final state.players;
-    board = Board.clear_mem state.board;
-  }
-
 (**[undo state] is an updated [state] with the most recent tile
    placement of the current player undone.*)
 let undo state =
@@ -182,8 +231,16 @@ let undo state =
 
 let update inpt_op state =
   match state.mode with
+  | Init_challenge_query -> { state with mode = Challenge_query }
+  | Challenge_query -> (
+      match inpt_op with
+      | None -> state
+      | Some inpt -> (
+          match inpt with
+          | Clicked (x, y) -> click x y state
+          | _ -> state))
   | Init_challenge -> { state with mode = Challenge }
-  | End_challenge -> { state with mode = Draw }
+  | Init_next_turn -> { state with mode = Draw }
   | Draw
   | Click
   | Point _ -> (
@@ -192,6 +249,12 @@ let update inpt_op state =
       | Some inpt -> (
           match inpt with
           | Clicked (x, y) -> click x y state
-          | Enter -> { state with mode = Init_challenge }
+          | Enter -> { state with mode = Init_challenge_query }
           | Z -> undo state))
-  | Challenge -> next_turn { state with mode = End_challenge }
+  | Challenge -> (
+      match inpt_op with
+      | None -> state
+      | Some inpt -> (
+          match inpt with
+          | Clicked (x, y) -> click x y state
+          | _ -> state))
