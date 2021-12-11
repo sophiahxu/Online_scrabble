@@ -298,11 +298,17 @@ let rec undo_all board =
   | [] -> board
   | h :: t -> undo_all (undo board)
 
-let rec clear_tiles = function 
-| [] -> [] 
-| h :: t -> {h with turn = false} :: clear_tiles t
+let rec clear_tiles = function
+  | [] -> []
+  | h :: t -> { h with turn = false } :: clear_tiles t
 
-let clear_mem board = { board with tiles = clear_tiles board.tiles; memory_stack = []; removed = [] }
+let clear_mem board =
+  {
+    board with
+    tiles = clear_tiles board.tiles;
+    memory_stack = [];
+    removed = [];
+  }
 
 let rec words_in_list lst acc =
   match lst with
@@ -310,35 +316,41 @@ let rec words_in_list lst acc =
   | h :: t ->
       if h.letter != None then words_in_list t (h :: acc)
       else if List.length acc > 1 then acc :: words_in_list t []
-      else words_in_list t acc
+      else words_in_list t []
 
 (**[horizontal_words board acc] is a list of the horizontal words in [b] *)
 let rec horizontal_words b num =
-  if (num <=15) then 
-    let row = b.tiles |> List.filter (fun x -> String.contains (x.name) 
-    (Char.chr (num + 96))) in 
-    let words = words_in_list row [] in 
+  if num <= 15 then
+    let row =
+      b.tiles
+      |> List.filter (fun x ->
+             String.contains x.name (Char.chr (num + 96)))
+    in
+    let words = words_in_list row [] in
     words @ horizontal_words b (num + 1)
-else [] 
+  else []
 
-(**[vertical_words board row acc] creates the list of words in the vertical [row] in 
-[board] and appends it onto the [acc].*)
-let rec vertical_words b num  = 
-  if (num <= 15) then 
-    let column = b.tiles |> List.filter (fun x -> String.sub (x.name) 1 
-    (String.length x.name - 1)
-    = (string_of_int num)) in 
-    let words =  words_in_list column [] in
+(**[vertical_words board row acc] creates the list of words in the
+   vertical [row] in [board] and appends it onto the [acc].*)
+let rec vertical_words b num =
+  if num <= 15 then
+    let column =
+      b.tiles
+      |> List.filter (fun x ->
+             String.sub x.name 1 (String.length x.name - 1)
+             = string_of_int num)
+    in
+    let words = words_in_list column [] in
     words @ vertical_words b (num + 1)
   else []
 
-  (**[placed_check tiles] checks whether or not there is a tile in [tiles] 
-  that has been placed during this turn.*)
-let rec placed_check tiles = 
-  match tiles with 
-  | [] -> false 
-  | h :: t when (turn h) -> true 
-  | h :: t -> placed_check t 
+(**[placed_check tiles] checks whether or not there is a tile in [tiles]
+   that has been placed during this turn.*)
+let rec placed_check tiles =
+  match tiles with
+  | [] -> false
+  | h :: t when turn h -> true
+  | h :: t -> placed_check t
 
 (**[filter_placed lst] is [lst] but with only the words that contain a
    tile that has been placed this turn.*)
@@ -364,13 +376,13 @@ let rec letter_score (word : t list) : int =
           | Some l -> l)
           key.letters
       in
-      if h.turn then 
-      (mult * letter_value) + letter_score t else letter_value + letter_score t
+      if h.turn then (mult * letter_value) + letter_score t
+      else letter_value + letter_score t
 
 (**[word_score word] is the score obtained from [word].*)
 let rec word_score (word : t list) : int =
   let current_score = letter_score word in
-  let rec multiplier w = 
+  let rec multiplier w =
     match w with
     | [] -> 1
     | h :: t ->
@@ -380,13 +392,11 @@ let rec word_score (word : t list) : int =
           | DoubleWord -> 2
           | _ -> 1
         in
-        if h.turn then (mult * multiplier t) else multiplier t
-      in 
-    (( multiplier word) *  current_score) 
+        if h.turn then mult * multiplier t else multiplier t
+  in
+  multiplier word * current_score
 
 let score b =
-  let words_list =
-    horizontal_words b 1 @ (vertical_words b 1) 
-  in
-   words_list |> filter_placed 
-   |> List.fold_left (fun acc word -> acc + word_score word) 0
+  let words_list = horizontal_words b 1 @ vertical_words b 1 in
+  words_list |> filter_placed
+  |> List.fold_left (fun acc word -> acc + word_score word) 0
