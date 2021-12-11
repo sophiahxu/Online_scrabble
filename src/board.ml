@@ -310,6 +310,17 @@ let clear_mem board =
     removed = [];
   }
 
+(**[string_of_word word] is the string representation of [word].*)
+let rec string_of_word = function
+  | [] -> ""
+  | h :: t ->
+      (match h.letter with
+      | Some l -> l
+      | None -> failwith "this shouldn't happen")
+      ^ string_of_word t
+
+(**[words_in_list lst acc] is the words in [lst] and the words in [acc].
+   A word is defined to have a length of at least 1.*)
 let rec words_in_list lst acc =
   match lst with
   | [] -> []
@@ -398,5 +409,10 @@ let rec word_score (word : t list) : int =
 
 let score b =
   let words_list = horizontal_words b 1 @ vertical_words b 1 in
+
+  (*print_endline "horizontal words:"; List.iter (fun w -> print_endline
+    (string_of_word w)) (horizontal_words b 1); print_endline "vertical
+    words:"; List.iter (fun w -> print_endline (string_of_word w))
+    (vertical_words b 1);*)
   words_list |> filter_placed
   |> List.fold_left (fun acc word -> acc + word_score word) 0
