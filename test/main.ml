@@ -17,24 +17,25 @@ open Bag
    displayed, and that only 98 tiles could be drawn. We also tried using
    our scrabble gui for extended periods of time, placing down different
    words, in order to ensure that no major issues would occur down the
-   line. 
-   For Board, testing revolved around ensuring that the board worked in exactly 
-   the ways we predicted. We tested to make sure that adding/removing tiles 
-   correctly changed the tiles on the backend and that they would
-   always the predicted properties (ex. color, letter, location). Additionally,
-   we checked to make sure that the board was created correctly and had the 
-   dimensions and locations that we wanted. We also tested the memory stack, 
-   making sure that it updated correctly as players added and removed letters 
-   from the board. The only method not tested was draw. 
-   For Player, the key information that needed to be maintained was the number 
-   of tiles of each player, and ensuring tiles were replaced/removed correctly. 
-   Black box testing was used, as player's with no tiles, and full tiles were 
-   tested according to the specifications. To ensure that the number of tiles 
-   would always be maintained correctly, we tested removing and adding tiles
+   line. For Board, testing revolved around ensuring that the board
+   worked in exactly the ways we predicted. We tested to make sure that
+   adding/removing tiles correctly changed the tiles on the backend and
+   that they would always the predicted properties (ex. color, letter,
+   location). Additionally, we checked to make sure that the board was
+   created correctly and had the dimensions and locations that we
+   wanted. We also tested the memory stack, making sure that it updated
+   correctly as players added and removed letters from the board. The
+   only method not tested was draw. For Player, the key information that
+   needed to be maintained was the number of tiles of each player, and
+   ensuring tiles were replaced/removed correctly. Black box testing was
+   used, as player's with no tiles, and full tiles were tested according
+   to the specifications. To ensure that the number of tiles would
+   always be maintained correctly, we tested removing and adding tiles
    individually, from a full to an empty player board, and vice versa.
-   For Bag, we tested to ensure that the bag always had the correct number
-   of tiles, and removing specific letters only affected that letter. Because
-   Bag never has to add tiles and cannot be undone, there are fewer tests. *)
+   For Bag, we tested to ensure that the bag always had the correct
+   number of tiles, and removing specific letters only affected that
+   letter. Because Bag never has to add tiles and cannot be undone,
+   there are fewer tests. *)
 let id x = x
 
 (** [pp_string s] pretty-prints string [s]. *)
@@ -195,33 +196,80 @@ let board_tests =
       (Board.undo board2);
     memory_stack_test "Board with undo all has empty memory stack" []
       (Board.undo_all board3);
-    memory_stack_test "Board with cleared memory has empty memory stack" [] 
-    (Board.clear_mem board3);
+    memory_stack_test "Board with cleared memory has empty memory stack"
+      []
+      (Board.clear_mem board3);
   ]
 
-  (**[score_test name expected_output board] constructs an OUnit
-   test named [name] that asserts the quality of [expected_output] with
-   board [b]. *)
+(**[score_test name expected_output board] constructs an OUnit test
+   named [name] that asserts the quality of [expected_output] with board
+   [b]. *)
 let score_test name expected_output b =
   name >:: fun _ ->
-  assert_equal expected_output
-    (Board.score b)
-    ~printer:(string_of_int)
+  assert_equal expected_output (Board.score b) ~printer:string_of_int
 
-  let score_board1 = Board.init ()
-  let score_board2 = Board.init () 
-  let score_board3 = Board.init()
+let score_board1 = Board.init ()
 
-  let score_tests = [
-    score_test "Empty board is 0 points" 0 score_board1; 
-    score_test "'B' is 0 points " 0 
-    (score_board1 |> Board.add_tile 410 130  "B" );
-    score_test "Horizontal 'HI' is 15 points" 15 
-    (score_board2 |> Board.add_tile 410 130 "H" |> Board.add_tile 
-    442 130 "I" );
-    score_test "Vertical 'HI' is 15 points. " 15
-    (score_board3 |> Board.add_tile 410 172 "H" |> Board.add_tile 
-    410 130 "I")
+let score_board2 =
+  score_board1
+  |> Board.add_tile 410 130 "H"
+  |> Board.add_tile 442 130 "I"
+
+let score_tests =
+  [
+    score_test "Empty board is 0 points" 0 score_board1;
+    score_test "'B' is 0 points " 0
+      (score_board1 |> Board.add_tile 410 130 "B");
+    score_test "Horizontal 'HI' is 15 points [triple letter]" 15
+      (score_board1
+      |> Board.add_tile 410 130 "H"
+      |> Board.add_tile 442 130 "I");
+    score_test "Vertical 'NO' is 6 points [triple letter] " 6
+      (score_board1
+      |> Board.add_tile 410 172 "N"
+      |> Board.add_tile 410 130 "O");
+    score_test "Horizontal 'BIRD' is 14 points [double word]" 14
+      (score_board1
+      |> Board.add_tile 401 154 "B"
+      |> Board.add_tile 433 154 "I"
+      |> Board.add_tile 465 154 "R"
+      |> Board.add_tile 497 154 "D");
+    score_test "Vertical 'CALL' is 12 points [double word]" 12
+      (score_board1
+      |> Board.add_tile 433 217 "C"
+      |> Board.add_tile 433 185 "A"
+      |> Board.add_tile 433 153 "L"
+      |> Board.add_tile 434 121 "L");
+    score_test "Horizontal 'RAG' is 6 points [A on triple letter]" 6
+      (score_board1
+      |> Board.add_tile 401 281 "R"
+      |> Board.add_tile 433 281 "A"
+      |> Board.add_tile 465 281 "G");
+    score_test "Vertical 'RYE' is 14 points [Y on triple letter]" 14
+      (score_board1
+      |> Board.add_tile 561 185 "R"
+      |> Board.add_tile 561 154 "Y"
+      |> Board.add_tile 561 121 "E");
+    score_test "Horizontal 'FOX' is 17 points [F on double letter]" 17
+      (score_board1
+      |> Board.add_tile 401 217 "F"
+      |> Board.add_tile 433 217 "O"
+      |> Board.add_tile 465 217 "X");
+    score_test "Vertical 'DOG' is 7 points [G on double letter]" 7
+      (score_board1
+      |> Board.add_tile 497 185 "D"
+      |> Board.add_tile 497 154 "O"
+      |> Board.add_tile 497 121 "G");
+    score_test "Horizontal 'DAD' is 5 points [no bonus]" 5
+      (score_board1
+      |> Board.add_tile 401 249 "D"
+      |> Board.add_tile 433 249 "A"
+      |> Board.add_tile 465 249 "D");
+    score_test "Vertical 'MOM is 7 points [no bonus]" 7
+      (score_board1
+      |> Board.add_tile 529 185 "M"
+      |> Board.add_tile 529 154 "O"
+      |> Board.add_tile 529 121 "M");
   ]
 
 (**[player_points name expected_output player] constructs an OUnit test
@@ -393,6 +441,7 @@ let bag_tests =
 
 let tests =
   "test suite for scrabble game"
-  >::: List.flatten [ board_tests; score_tests; players_tests; bag_tests ]
+  >::: List.flatten
+         [ board_tests; score_tests; players_tests; bag_tests ]
 
 let _ = run_test_tt_main tests
