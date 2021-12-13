@@ -8,7 +8,6 @@ type mode =
   | Continue_query
 
 type t = {
-  (*TODO: change as needed.*)
   mode : mode;
   loser : int option;
   finished : bool;
@@ -95,7 +94,6 @@ let continue () =
 
 let init () =
   { mode = Challenger_query; loser = None; finished = false }
-(*TODO: change as needed.*)
 
 let draw c =
   match c.mode with
