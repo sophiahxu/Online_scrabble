@@ -11,6 +11,8 @@ type t = {
   mode : mode;
   loser : int option;
   finished : bool;
+  challenger : int option;
+  victim : int option;
 }
 
 (*[draw_rects num] draws a row of rectangles, with its associated number
@@ -46,14 +48,16 @@ let which_player x =
   else if x > 130 && x < 160 then 4
   else 0
 
-let return_int () =
+let return_challenger () =
   let s = wait_next_event [ Button_down ] in
-  let x = s.mouse_x in
-  which_player x
+  let y = s.mouse_y in
+  if y > 500 && y < 530 then
+    let x = s.mouse_x in
+    let num = which_player x in
+    Some num
+  else None
 
 let look_up () =
-  (* let s = wait_next_event [ Button_down ] in let x = s.mouse_x in let
-     num = which_player x in *)
   moveto 40 475;
   draw_string "Players, look up in ";
   moveto 40 460;
@@ -68,6 +72,26 @@ let look_up () =
   moveto 85 385;
   draw_string "DONE"
 
+let draw_two num y =
+  let x = 70 + (30 * (num - 1)) in
+  match num with
+  | 0 -> draw_string ""
+  | _ ->
+      draw_rect x y 30 30;
+      draw_rects (num - 1) y
+
+let draw_nums () =
+  let challenger =
+    match return_challenger () with
+    | None -> failwith "can't happen"
+    | Some i -> i
+  in
+  let victim = 2 in
+  moveto 82 305;
+  draw_string (string_of_int challenger);
+  moveto 112 305;
+  draw_string (string_of_int victim)
+
 let loser () =
   (* let s = wait_next_event [ Button_down ] in if s.mouse_x > 70 &&
      s.mouse_x < 120 && s.mouse_y > 375 && s.mouse_y < 415 then*)
@@ -75,7 +99,7 @@ let loser () =
   draw_string "Which player lost the";
   moveto 40 335;
   draw_string "challenge?";
-  draw_rects 4 295
+  draw_nums ()
 
 let continue () =
   (* let s = wait_next_event [ Button_down ] in let x = s.mouse_x in let
@@ -93,7 +117,13 @@ let continue () =
   draw_string "Return"
 
 let init () =
-  { mode = Challenger_query; loser = None; finished = false }
+  {
+    mode = Challenger_query;
+    loser = None;
+    finished = false;
+    challenger = None;
+    victim = None;
+  }
 
 let draw c =
   match c.mode with
@@ -106,16 +136,20 @@ let click x y c =
   match c.mode with
   | Challenger_query ->
       if y > 500 && y < 530 && x > 40 && x < 160 then
-        { mode = Dictionary_lookup; loser = None; finished = false }
+        {
+          c with
+          mode = Dictionary_lookup;
+          challenger = return_challenger ();
+        }
       else c
   | Dictionary_lookup ->
       if x > 70 && x < 120 && y > 375 && y < 415 then
-        { mode = Loser_query; loser = None; finished = false }
+        { c with mode = Loser_query }
       else c
   | Loser_query ->
       if y > 295 && y < 325 then
         let num = Some (which_player x) in
-        { mode = Continue_query; loser = num; finished = false }
+        { c with mode = Continue_query; loser = num }
       else c
   | Continue_query -> { c with finished = true }
 
