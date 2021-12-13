@@ -147,17 +147,26 @@ let click x y state =
   | Init_next_turn ->
       state
   | Challenge ->
-      let c =
+      let c1 =
         match state.challenge with
         | Some c -> c
         | None -> failwith "this shouldn't happen"
       in
-      if Challenge.finished c then
-        next_turn { state with challenge = None; mode = Init_next_turn }
+      let return_state =
+        { state with challenge = Some (Challenge.click x y c1) }
+      in
+      let c2 =
+        match state.challenge with
+        | Some c -> c
+        | None -> failwith "this shouldn't happen"
+      in
+      if Challenge.finished c2 then
+        next_turn
+          { return_state with challenge = None; mode = Init_next_turn }
         (*TODO: update so that we either clear the current turn and skip
           the current player's next turn or we just skip loser's next
           turn*)
-      else { state with challenge = Some (Challenge.click x y c) }
+      else return_state
 
 let game_over state = state.game_over
 
@@ -190,7 +199,11 @@ let draw (state : t) (inpt_op : input option) : unit =
   | Init_challenge ->
       set_color white;
       fill_rect 25 25 150 575;
-      fill_rect 450 25 380 60
+      fill_rect 450 25 380 60;
+      Challenge.draw
+        (match state.challenge with
+        | None -> failwith "this shouldn't happen"
+        | Some c -> c)
   | Init_next_turn ->
       draw_key ();
       let rec draw_boxes = function
@@ -202,11 +215,14 @@ let draw (state : t) (inpt_op : input option) : unit =
       draw_boxes state.players;
       Player.draw_box state.turn true;
       Player.draw state.turn
-  | Challenge ->
-      Challenge.draw
-        (match state.challenge with
-        | None -> failwith "this shouldn't happen"
-        | Some c -> c)
+  | Challenge -> (
+      match inpt_op with
+      | Some (Clicked _) ->
+          Challenge.draw
+            (match state.challenge with
+            | None -> failwith "this shouldn't happen"
+            | Some c -> c)
+      | _ -> ())
 
 let init_draw state =
   draw_key ();
