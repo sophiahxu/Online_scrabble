@@ -190,7 +190,9 @@ let click x y state =
           state with
           mode = Init_challenge;
           challenge =
-            Some (Challenge.init 1) (*PLACEHOLDER FOR NOW, FIX LATER*);
+            Some
+              (Challenge.init
+                 ((state.turn |> Player.player_name).[7] |> int_of_char));
         }
       else if x > 650 && x < 730 && y > 40 && y < 70 then
         next_turn { state with mode = Init_next_turn }
@@ -254,6 +256,7 @@ let draw (state : t) (inpt_op : input option) : unit =
         | Some c -> c)
   | Init_next_turn ->
       draw_key ();
+      Board.draw state.board;
       let rec draw_boxes = function
         | [] -> ()
         | h :: t ->
