@@ -1,8 +1,9 @@
 type t
 (**Represents a scrabble challenge.*)
 
-val init : unit -> t
-(**[init ()] initializes the challenge gameplay mode.*)
+val init : int -> t
+(**[init int] initializes the challenge gameplay mode, with player [int]
+   being the challenged player.*)
 
 val click : int -> int -> t -> t
 (**[click x y c] returns updated challenge [c] according to the [x] and

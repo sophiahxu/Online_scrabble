@@ -189,7 +189,8 @@ let click x y state =
         {
           state with
           mode = Init_challenge;
-          challenge = Some (Challenge.init ());
+          challenge =
+            Some (Challenge.init 1) (*PLACEHOLDER FOR NOW, FIX LATER*);
         }
       else if x > 650 && x < 730 && y > 40 && y < 70 then
         next_turn { state with mode = Init_next_turn }
