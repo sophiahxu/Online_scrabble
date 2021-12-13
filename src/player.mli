@@ -71,3 +71,7 @@ val change_skip : t -> t
 val draw_box : t -> bool -> unit
 (**[draw_box player status] draws the name, box and points of [player]
    in blue if [status] is true, and draws in black if [status] is false*)
+
+val get_player : string -> t list -> t
+(**[get_player name list] returns the player associated with [name] in
+   [list]. Requires: exactly one player in the [list] has name [name].*)

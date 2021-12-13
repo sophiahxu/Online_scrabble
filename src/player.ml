@@ -249,3 +249,7 @@ let draw_box p status =
   draw_string (string_of_int p.point_total)
 
 let clear_mem p = { p with memory_stack = [] }
+
+let rec get_player name = function
+  | [] -> failwith "invalid name argument"
+  | h :: t -> if name = h.name then h else get_player name t

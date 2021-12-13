@@ -88,17 +88,69 @@ let draw_key () =
   |> List.iteri (fun i (l, num) -> letter_key l num 50 (430 - (i * 15)))
 
 (**[next_turn state] is [state] updated to be the next player's turn.*)
-let next_turn state =
+let rec next_turn state =
   let turn_final =
     state.turn |> Player.clear_mem
     |> Player.add_points (Board.score state.board)
   in
-  {
-    state with
-    turn = Player.next_turn state.turn state.players;
-    players = Player.update_player turn_final state.players;
-    board = Board.clear_mem state.board;
-  }
+  let st2 =
+    {
+      state with
+      turn = Player.next_turn state.turn state.players;
+      players = Player.update_player turn_final state.players;
+      board = Board.clear_mem state.board;
+    }
+  in
+  if Player.get_skip st2.turn then
+    next_turn { st2 with turn = Player.change_skip st2.turn }
+  else st2
+
+(**[challenge_finished state] is the updated state according to the
+   outcome of the completed challenge. If the current player lost, then
+   we undo everything done during the current turn and skip the players
+   next turn as well. If the challenger lost, then we skip that player's
+   next turn.*)
+let challenge_finished state =
+  (*TODO: update so that we either clear the current turn and skip the
+    current player's next turn or we just skip loser's next turn*)
+  let c =
+    match state.challenge with
+    | Some c -> c
+    | None -> failwith "this shouldn't happen"
+  in
+  let loser_num =
+    match Challenge.loser c with
+    | None -> failwith "This shouldn't happen"
+    | Some l -> l
+  in
+  let loser_name = "Player " ^ string_of_int loser_num in
+  if
+    Player.player_name state.turn = loser_name
+    (*turn lost the challenge*)
+  then
+    next_turn
+      {
+        state with
+        board = Board.undo_all state.board;
+        turn = state.turn |> Player.change_skip |> Player.undo_all;
+        challenge = None;
+        mode = Init_next_turn;
+      }
+  else
+    (*challenger lost the challenge*)
+    let challenger_player =
+      Player.get_player loser_name state.players
+    in
+    next_turn
+      {
+        state with
+        players =
+          Player.update_player
+            (Player.change_skip challenger_player)
+            state.players;
+        challenge = None;
+        mode = Init_next_turn;
+      }
 
 (**[click x y state] is an updated [state] depending on the location [x]
    and [y] of where the mouse clicked.*)
@@ -160,12 +212,7 @@ let click x y state =
         | Some c -> c
         | None -> failwith "this shouldn't happen"
       in
-      if Challenge.finished c2 then
-        next_turn
-          { return_state with challenge = None; mode = Init_next_turn }
-        (*TODO: update so that we either clear the current turn and skip
-          the current player's next turn or we just skip loser's next
-          turn*)
+      if Challenge.finished c2 then challenge_finished return_state
       else return_state
 
 let game_over state = state.game_over
