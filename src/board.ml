@@ -184,12 +184,36 @@ let turn tile = tile.turn
 
 let memory_stack b = b.memory_stack
 
-let blank_tiles r side =
+let remove_stack b = b.removed
+
+(** [pp_string s] pretty-prints string [s]. *)
+let pp_tile s = "\"" ^ s.name ^ "\""
+
+(** [pp_list pp_elt lst] pretty-prints list [lst], using [pp_elt] to
+    pretty-print each element of [lst]. *)
+let pp_list pp_elt lst =
+  let pp_elts lst =
+    let rec loop n acc = function
+      | [] -> acc
+      | [ h ] -> acc ^ pp_elt h
+      | h1 :: (h2 :: t as t') ->
+          if n = 100 then acc ^ "..." (* stop printing long list *)
+          else loop (n + 1) (acc ^ pp_elt h1 ^ "; ") t'
+    in
+    loop 0 "" lst
+  in
+  "[" ^ pp_elts lst ^ "]"
+
+(**[blank_tile r side] draws white rectangles over the blank tiles in
+   [r]. Each of these rectangles has the length and width [side].*)
+let rec blank_tiles r side =
+  let _ = print_endline (pp_list pp_tile r) in
   match r with
   | [] -> ()
   | h :: t ->
       set_color white;
-      fill_rect (tile_x h) (tile_y h) side side
+      fill_rect (tile_x h) (tile_y h) side side;
+      blank_tiles t side
 
 (**[color_grid tiles side] adds color to the rectangles as described by
    [tiles] by using the colors and locations in this list. Each
@@ -298,17 +322,14 @@ let rec undo_all board =
   | [] -> board
   | h :: t -> undo_all (undo board)
 
+(**[clear_tiles t] sets the turn variable to false for all of the tiles
+   in list [t].*)
 let rec clear_tiles = function
   | [] -> []
   | h :: t -> { h with turn = false } :: clear_tiles t
 
 let clear_mem board =
-  {
-    board with
-    tiles = clear_tiles board.tiles;
-    memory_stack = [];
-    removed = [];
-  }
+  { board with tiles = clear_tiles board.tiles; memory_stack = [] }
 
 (**[string_of_word word] is the string representation of [word].*)
 let rec string_of_word = function
@@ -409,10 +430,5 @@ let rec word_score (word : t list) : int =
 
 let score b =
   let words_list = horizontal_words b 1 @ vertical_words b 1 in
-
-  (*print_endline "horizontal words:"; List.iter (fun w -> print_endline
-    (string_of_word w)) (horizontal_words b 1); print_endline "vertical
-    words:"; List.iter (fun w -> print_endline (string_of_word w))
-    (vertical_words b 1);*)
   words_list |> filter_placed
   |> List.fold_left (fun acc word -> acc + word_score word) 0

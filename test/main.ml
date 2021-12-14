@@ -117,6 +117,15 @@ let memory_stack_test name expected_output b =
     (List.map Board.letter (Board.memory_stack b))
     ~printer:(pp_list pp_string)
 
+(**[remove_stack_test name expected_output board] constructs an OUnit
+   test named [name] that asserts the quality of [expected_output] with
+   board [b]. *)
+let removed_test name expected_output b =
+  name >:: fun _ ->
+  assert_equal expected_output
+    (List.map Board.letter (Board.remove_stack b))
+    ~printer:(pp_list pp_string)
+
 let board = Board.init ()
 
 let tile_list = tiles board
@@ -194,8 +203,12 @@ let board_tests =
     memory_stack_test
       "Board with tiles 'A' with undo has empty memory stack" []
       (Board.undo board2);
+    removed_test "Board with tiles 'A' with undo has 'A' in removed "
+      [ "A" ] (Board.undo board2);
     memory_stack_test "Board with undo all has empty memory stack" []
       (Board.undo_all board3);
+    removed_test "Board with undo_all has 'C', 'B', and 'A' in removed"
+      [ "A"; "B"; "C" ] (Board.undo_all board4);
     memory_stack_test "Board with cleared memory has empty memory stack"
       []
       (Board.clear_mem board3);

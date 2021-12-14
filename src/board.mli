@@ -38,6 +38,10 @@ val memory_stack : b -> t list
 (**[memory_stack a] is the list of tiles that were placed on the current
    turn for board [b]*)
 
+val remove_stack : b -> t list
+(**[remove_stack a] is the list of tiles that were removed from board
+   [b].*)
+
 val clicked : int -> int -> b -> bool
 (**[clicked x y] is whether or not the dimension *)
 
