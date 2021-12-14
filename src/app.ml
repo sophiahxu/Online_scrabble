@@ -17,6 +17,47 @@ type app_state =
   | Loading_complete
   | Complete
 
+let draw_initial_update () =
+  open_graph "";
+  resize_window 900 625;
+  set_window_title "Scrabble";
+
+  set_color 0x8282E8;
+  let vertices = [| (350, 285); (350, 360); (550, 360); (550, 285) |] in
+  draw_poly vertices;
+  fill_poly vertices;
+
+  set_color black;
+  moveto 300 260;
+  draw_string "Let's Play Scrabble! Click the Play Button to Start.";
+  moveto 390 235;
+  draw_string "Press 'Esc' to Exit";
+
+  moveto 440 315;
+  draw_string "PLAY";
+
+  let vertices = [| (200, 65); (200, 190); (700, 190); (700, 65) |] in
+  draw_poly vertices;
+  moveto 205 175;
+  draw_string "Instructions: ";
+  moveto 205 160;
+  draw_string
+    "1. To place letters onto the board, players should click on one \
+     of their tiles";
+  moveto 205 145;
+  draw_string "and then click on the desired location on the board. ";
+  moveto 205 130;
+  draw_string "2. To exit the game, press the escape key.";
+  moveto 223 115;
+  draw_string "To undo a tile placement, press the \"z\" key.";
+  moveto 223 100;
+  draw_string "To go to the next player's turn, press the enter key.";
+  moveto 205 85;
+  draw_string
+    "3. For more information about the official Scrabble rules, visit";
+  moveto 205 70;
+  draw_string "https://scrabble.hasbro.com/en-us/rules."
+
 (**[update state] updates the game each frame depending on the game
    state.
 
@@ -57,23 +98,7 @@ let rec update (st : app_state) =
 (**[loading_initial_update st] updates the game during game state
    [Loading_initial].*)
 and loading_initial_update strt =
-  open_graph "";
-  resize_window 900 625;
-  set_window_title "Scrabble";
-
-  set_color 0x8282E8;
-  let vertices = [| (350, 275); (350, 350); (550, 350); (550, 275) |] in
-  draw_poly vertices;
-  fill_poly vertices;
-
-  set_color black;
-  moveto 300 250;
-  draw_string "Let's Play Scrabble! Click the Play Button to Start.";
-  moveto 390 225;
-  draw_string "Press 'Esc' to Exit";
-
-  moveto 440 305;
-  draw_string "PLAY";
+  draw_initial_update ();
   update (Initial strt)
 
 (**[initial_update strt] updates the game during game state [Initial].*)
