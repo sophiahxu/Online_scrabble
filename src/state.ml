@@ -192,7 +192,12 @@ let click x y state =
           challenge =
             Some
               (Challenge.init
-                 ((state.turn |> Player.player_name).[7] |> int_of_char));
+                 (let name = state.turn |> Player.player_name in
+                  match name with
+                  | "Player 1" -> 1
+                  | "Player 2" -> 2
+                  | "Player 3" -> 3
+                  | _ -> 4));
         }
       else if x > 650 && x < 730 && y > 40 && y < 70 then
         next_turn { state with mode = Init_next_turn }
