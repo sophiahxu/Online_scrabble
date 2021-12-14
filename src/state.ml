@@ -54,6 +54,32 @@ let init () =
     challenge = None;
   }
 
+let init_end () =
+  let players =
+    [
+      Player.init "Player 1" |> Player.add_points 160;
+      Player.init "Player 2" |> Player.add_points 162;
+      Player.init "Player 3" |> Player.add_points 171;
+      Player.init "Player 4" |> Player.add_points 155;
+    ]
+  in
+  let rec remove num bag =
+    if num = 0 then bag
+    else
+      let letter = Bag.find_letter bag in
+      remove (num - 1) (Bag.remove bag letter)
+  in
+
+  {
+    mode = Draw;
+    board = Board.init ();
+    players;
+    bag = Bag.init () |> remove 85;
+    turn = List.hd players;
+    game_over = false;
+    challenge = None;
+  }
+
 (**[color_key color phrase x y w h] draws a rectangle with lower left
    corner at ([x],[y]) with width [w] and height [h] and colors it with
    [color]. [phrase] is displayed to the right of the rectangle*)
@@ -152,6 +178,11 @@ let challenge_finished state =
         mode = Init_next_turn;
       }
 
+(**[end_game state] is state with all of the player's scores updated
+   according to official scrabble rules, and the game_over field is set
+   to true.*)
+let end_game state = { state with game_over = true }
+
 (**[click x y state] is an updated [state] depending on the location [x]
    and [y] of where the mouse clicked.*)
 let click x y state =
@@ -196,6 +227,16 @@ let click x y state =
         }
       else if x > 650 && x < 730 && y > 40 && y < 70 then
         next_turn { state with mode = Init_next_turn }
+      else if
+        Bag.count state.bag = 0
+        && x > 750 && x < 810
+        && float_of_int y
+           < (((30. ** 2.) -. ((float_of_int x -. 780.) ** 2.)) ** 0.5)
+             +. 55.
+        && float_of_int y
+           > -.(((30. ** 2.) -. ((float_of_int x -. 780.) ** 2.)) ** 0.5)
+             +. 55.
+      then end_game state
       else state
   | Init_challenge_query
   | Init_challenge
@@ -220,9 +261,9 @@ let click x y state =
 
 let game_over state = state.game_over
 
-(**[challenge_query_draw ()] draws the challenge button and the continue
-   button.*)
-let challenge_query_draw () =
+(**[challenge_query_draw state] draws the challenge button and the
+   continue button. It also draws the done button if the bag is empty.*)
+let challenge_query_draw state =
   set_color white;
   fill_rect 450 25 380 60;
   set_color black;
@@ -231,7 +272,16 @@ let challenge_query_draw () =
   moveto 564 50;
   draw_string "Challenge";
   moveto 667 50;
-  draw_string "Continue"
+  draw_string "Continue";
+  (*done button*)
+  if Bag.count state.bag = 0 then (
+    set_color 0x8282E8;
+    fill_circle 780 55 30;
+    set_color black;
+    draw_circle 780 55 30;
+    moveto 757 50;
+    draw_string "End Game")
+  else ()
 
 let draw (state : t) (inpt_op : input option) : unit =
   match state.mode with
@@ -244,7 +294,7 @@ let draw (state : t) (inpt_op : input option) : unit =
           Player.draw state.turn;
           Bag.draw state.bag;
           Board.draw state.board)
-  | Init_challenge_query -> challenge_query_draw ()
+  | Init_challenge_query -> challenge_query_draw state
   | Challenge_query -> ()
   | Init_challenge ->
       set_color white;

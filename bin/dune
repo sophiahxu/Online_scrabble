@@ -1,3 +1,9 @@
 (executable
  (name main)
+ (modules main)
+ (libraries graphics Game))
+
+(executable
+ (name end)
+ (modules end)
  (libraries graphics Game))

@@ -12,6 +12,9 @@ test:
 play:
 	OCAMLRUNPARAM=b dune exec bin/main.exe
 
+end:
+	OCAMLRUNPARAM=b dune exec bin/end.exe
+
 zip:
 	rm -f scrabble.zip
 	zip -r scrabble.zip . -x@exclude.lst

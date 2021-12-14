@@ -3,11 +3,16 @@ open State
 
 exception Exit
 
+(**[start] represents where the scrabble game should be initialized.*)
+type start =
+  | Default
+  | End
+
 (**[game_state] represents the state of the application*)
 type app_state =
-  | Loading_initial
-  | Initial
-  | Loading_active
+  | Loading_initial of start
+  | Initial of start
+  | Loading_active of start
   | Active of State.t
   | Loading_complete
   | Complete
@@ -42,16 +47,16 @@ type app_state =
    [Complete]: The game is over and there is winner.*)
 let rec update (st : app_state) =
   match st with
-  | Loading_initial -> loading_initial_update ()
-  | Initial -> initial_update ()
-  | Loading_active -> loading_active_update ()
+  | Loading_initial strt -> loading_initial_update strt
+  | Initial strt -> initial_update strt
+  | Loading_active strt -> loading_active_update strt
   | Active state -> active_update state
   | Loading_complete -> loading_complete_update ()
   | Complete -> complete_update ()
 
 (**[loading_initial_update st] updates the game during game state
    [Loading_initial].*)
-and loading_initial_update () =
+and loading_initial_update strt =
   open_graph "";
   resize_window 900 625;
   set_window_title "Scrabble";
@@ -69,27 +74,34 @@ and loading_initial_update () =
 
   moveto 440 305;
   draw_string "PLAY";
-  update Initial
+  update (Initial strt)
 
-(**[initial_update st] updates the game during game state [Initial].*)
-and initial_update () =
+(**[initial_update strt] updates the game during game state [Initial].*)
+and initial_update strt =
   let sta = wait_next_event [ Button_down; Key_pressed ] in
   if sta.keypressed then
-    if sta.key = '\027' then raise Exit else initial_update ();
+    if sta.key = '\027' then raise Exit else initial_update strt;
   if sta.button then
     if
       sta.mouse_x > 350 && sta.mouse_x < 550 && sta.mouse_y > 275
       && sta.mouse_y < 350
-    then update Loading_active
-    else initial_update ()
+    then update (Loading_active strt)
+    else initial_update strt
 
-(**[loading_active_update st] updates the game during game state
-   [Loading_active].*)
-and loading_active_update () =
+(**[loading_active_update strt] updates the game during game state
+   [Loading_active] and initalizes the game to the starting point
+   indicated by [strt].*)
+and loading_active_update strt =
   clear_graph ();
-  let sta = State.init () in
-  State.init_draw sta;
-  update (Active sta)
+  match strt with
+  | Default ->
+      let sta = State.init () in
+      State.init_draw sta;
+      update (Active sta)
+  | End ->
+      let sta = State.init_end () in
+      State.init_draw sta;
+      update (Active sta)
 
 (**[active_update st] updates the game during game state [Active].*)
 and active_update st =
@@ -118,10 +130,68 @@ and active_update st =
     active_update s
 
 (**[loading_complete_update st] updates the game during game state
-   [Loading_complete].*)
-and loading_complete_update st = ()
+   according to [st] [Loading_complete].*)
+and loading_complete_update st =
+  clear_graph ();
+  let draw_star x y r color =
+    set_color color;
+    (*trig values*)
+    let cos72 = 0.3090170 in
+    let sin72 = 0.9510565 in
+    let cos18 = sin72 in
+    let sin18 = cos72 in
+    let cos54 = 0.5877853 in
+    let sin54 = 0.8090170 in
+    (*r and r'*)
+    let rfloat = float_of_int r in
+    let r'float = rfloat *. sin18 /. sin54 in
+    (*triangle a*)
+    let a0 =
+      [|
+        (-.rfloat *. cos18, rfloat *. sin18);
+        (rfloat *. cos18, rfloat *. sin18);
+        (0., -.r'float);
+      |]
+    in
+    (*triangle b*)
+    let b0 =
+      [|
+        (-.rfloat *. cos54, -.rfloat *. sin54);
+        (r'float *. cos18, -.r'float *. sin18);
+        (0., rfloat);
+      |]
+    in
+    (*triangle c*)
+    let c0 =
+      [|
+        (rfloat *. cos54, -.rfloat *. sin54);
+        (-.r'float *. cos18, -.r'float *. sin18);
+        (0., rfloat);
+      |]
+    in
+    (*turn arrays to int*int arrays and translate them to center*)
+    let translate (a, b) =
+      ( (Float.round a |> int_of_float) + x,
+        (Float.round b |> int_of_float) + y )
+    in
+    let a = Array.map translate a0 in
+    let b = Array.map translate b0 in
+    let c = Array.map translate c0 in
+    fill_poly a;
+    fill_poly b;
+    fill_poly c
+  in
 
-(**[complete_update st] updates the game during game state [Complete].*)
-and complete_update st = ()
+  draw_star 450 400 180 0x0000FF;
+  draw_star 450 400 160 0x8282E8;
+  complete_update ()
 
-let start () = update Loading_initial
+(**[complete_update ()] updates the game during game state [Complete].*)
+and complete_update () =
+  let sta = wait_next_event [ Key_pressed ] in
+  if sta.keypressed then
+    if sta.key = '\027' then raise Exit else complete_update ()
+
+let start () = update (Loading_initial Default)
+
+let start_end () = update (Loading_initial End)

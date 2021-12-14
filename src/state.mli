@@ -11,6 +11,10 @@ val init : unit -> t
 (**[init ()] initializes the scrabble game state for the start of the
    game*)
 
+val init_end : unit -> t
+(**[init_end ()] initializes the scrabble game state for clos to the end
+   of the game*)
+
 val init_draw : t -> unit
 (**[init_draw state] draws the initial state of the game.*)
 
